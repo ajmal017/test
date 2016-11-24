@@ -14,10 +14,6 @@ parser.add_argument('-s', '--stock', help='NSE stock symbol', required=True)
 parser.add_argument('-d','--delta', help='Start date', required=True)
 args = vars(parser.parse_args())
 
-#sbin = get_history(symbol= args.s,
-#                    start=date(2016,1,1),
-#                    end=date(2016,11,18))
-
 #Initialize
 
 eTime = datetime.date.today()
@@ -26,16 +22,17 @@ sTime = eTime - t_delta
 
 #stock = get_history(symbol=args['stock'], start= sTime,  end= eTime)
 #stock[['Symbol','Close']].plot()
-#plt.show()
-#print(sbin.op
-#proxies = {'http':'proxy1.wipro.com:8080'}
-df = get_history(symbol=args['stock'], start= sTime,  end= eTime)
 
+# Get the historical data 
+df = get_history(symbol=args['stock'], start= sTime,  end= eTime)
+# Create a new column
 df["Date"] = pd.to_datetime(df.index)
 #print(df)
 
 df['LReturn'] = numpy.log(df['Close']/df['Prev Close'])
+df1 = df.append(df['LReturn'])
 
+#Avg = df['LReturn'].mean()
 Avg = numpy.average(df['LReturn'])
 Stdv = numpy.std(df['LReturn'])
 print("Average price : %s" % (Avg))
