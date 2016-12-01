@@ -2,13 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="446655f6-6357-49ac-bac6-fab4422c23b6" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/CAPF.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/ONGC.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/SBIN.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/VEDL.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/bin/stock_hist_ONGC.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/bin/stock_hist_SBIN.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/example.png" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nse/bin/nse.py" afterPath="$PROJECT_DIR$/nse/bin/nse.py" />
     </list>
     <ignored path="test.iws" />
@@ -32,10 +25,11 @@
       <file leaf-file-name="screener.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nse/screener.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="76" column="40" selection-start-line="76" selection-start-column="40" selection-end-line="76" selection-end-column="40" />
+            <state relative-caret-position="1024">
+              <caret line="64" column="29" selection-start-line="64" selection-start-column="29" selection-end-line="64" selection-end-column="29" />
               <folding>
                 <element signature="e#33#47#0" expanded="true" />
+                <element signature="e#1805#7899#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -44,8 +38,8 @@
       <file leaf-file-name="nse.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nse/bin/nse.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="20" column="53" selection-start-line="20" selection-start-column="53" selection-end-line="20" selection-end-column="53" />
+            <state relative-caret-position="288">
+              <caret line="18" column="74" selection-start-line="18" selection-start-column="74" selection-end-line="18" selection-end-column="74" />
               <folding>
                 <element signature="e#65#116#0" expanded="true" />
               </folding>
@@ -477,6 +471,7 @@
           <caret line="203" column="18" selection-start-line="203" selection-start-column="18" selection-end-line="203" selection-end-column="18" />
           <folding>
             <element signature="e#33#47#0" expanded="true" />
+            <element signature="e#1805#7899#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -568,16 +563,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nse/screener.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="76" column="40" selection-start-line="76" selection-start-column="40" selection-end-line="76" selection-end-column="40" />
-          <folding>
-            <element signature="e#33#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/pyget.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
@@ -598,10 +583,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/nse/screener.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1024">
+          <caret line="64" column="29" selection-start-line="64" selection-start-column="29" selection-end-line="64" selection-end-column="29" />
+          <folding>
+            <element signature="e#33#47#0" expanded="true" />
+            <element signature="e#1805#7899#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/nse.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="20" column="53" selection-start-line="20" selection-start-column="53" selection-end-line="20" selection-end-column="53" />
+        <state relative-caret-position="288">
+          <caret line="18" column="74" selection-start-line="18" selection-start-column="74" selection-end-line="18" selection-end-column="74" />
           <folding>
             <element signature="e#65#116#0" expanded="true" />
           </folding>

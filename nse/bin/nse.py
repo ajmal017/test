@@ -1,7 +1,7 @@
 #!python -utt
 """
 Author : Abhishek Chaturvedi
-version: 0.1
+version: 0.9
 """
 
 from nsepy import get_history, get_index_pe_history
@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import math
 
+stocksToPull = 'CAPF','SBIN','VEDL','ONGC','CUMMINSIND','PNB','BHEL','GAIL'
 
 def write_excel(dataframe=None, stock=None):
     name = '/home/abhishek/Documents/pycharm/projects/data/stock_hist_%s.xlsx' % stock
@@ -30,15 +31,15 @@ def write_excel(dataframe=None, stock=None):
     return True
 
 
-def get_1SD(fdelta=None, l_avg=None, l_stdv=None):
+def get_SD(fdelta=None, l_avg=None, l_stdv=None,sd=None):
     # Calculate the projected average
     avg = int(fdelta) * l_avg
     # Calculate the projected standard deviation
     stdv = math.sqrt(int(fdelta)) * l_stdv
 
     # Calculate the projected upper and lower bounds
-    upper = avg + stdv
-    lower = avg - stdv
+    upper = avg + stdv*int(sd)
+    lower = avg - stdv*int(sd)
 
     return upper, lower
 
@@ -131,36 +132,33 @@ def main():
     print('Daily volatility for %s is : %s ' % (args['stock'], round(l_stdv * 100, 2)))
 
     # Calculate the projected price for 1SD
-    l_f_upper, l_f_lower = get_1SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv)
+    l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=1)
     l_u_expected = lcp * np.exp(l_f_upper)
     l_l_expected = lcp * np.exp(l_f_lower)
 
     # Print the calculations
-    print('.....1SD......\n')
+    print('\n\t.....1SD......I am 68.27% sure about it')
     print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
     print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
-    print('I am 68.27% sure about it')
     print
 
     # Now work for the 2SD
-    l_f_upper, l_f_lower = get_2SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv)
+    l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=2)
     l_u_expected = lcp * np.exp(l_f_upper)
     l_l_expected = lcp * np.exp(l_f_lower)
     # Print the calculations
-    print('.....2SD......\n')
+    print('\n\t.....2SD......I am 95.45% sure about it')
     print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
     print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
-    print('I am 95.45% sure about it')
 
     # Now work on 3SD
-    l_f_upper, l_f_lower = get_3SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv)
+    l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=3)
     l_u_expected = lcp * np.exp(l_f_upper)
     l_l_expected = lcp * np.exp(l_f_lower)
     # Print the calculations
-    print('.....2SD......\n')
+    print('\n\t.....2SD......I am 99.7% sure about it')
     print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
     print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
-    print('I am 95.45% sure about it')
 
     # Save to excel
     if not write_excel(stock=args['stock'], dataframe=df):
