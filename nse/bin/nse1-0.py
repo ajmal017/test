@@ -25,7 +25,7 @@ def write_excel(dataframe = None, stock=None):
 	# Close the Pandas Excel writer and output the Excel file.
 	writer.save()
 	print('Successfully written to %s' % name)
-	
+
 	return True
 
 def get_1SD(fdelta=None, l_avg=None, l_stdv=None):
@@ -34,27 +34,29 @@ def get_1SD(fdelta=None, l_avg=None, l_stdv=None):
 	avg = int(fdelta) * l_avg
 	# Calculate the projected standard deviation
 	stdv = math.sqrt(int(fdelta)) * l_stdv
-	
+
 	# Calculate the projected upper and lower bounds
 	upper = avg + stdv
 	lower = avg - stdv
-	
+
 	return upper, lower
-	
+
 def get_2SD(fdelta=None, l_avg=None, l_stdv=None):
 	# Calculate the projected average
 	avg = int(fdelta) * l_avg
 	# Calculate the projected standard deviation
 	stdv = math.sqrt(int(fdelta)) * l_stdv
-	
+
 	# Calculate the projected upper and lower bounds
 	upper = avg + stdv*2
 	lower = avg - stdv*2
-	
+
 	return upper, lower
-	
+
+
 def main():
 	parser = argparse.ArgumentParser(description='STOCK volatility calculator')
+ 	parser.add_argument('-c', '--current', help='Flag if current data needs to be pulled', required=False)
 	parser.add_argument('-s', '--stock', help='NSE stock symbol', required=True)
 	parser.add_argument('-d','--delta', help='Start date', required=True)
 	parser.add_argument('-f','--fdelta', help='Future days for which you are hoping for', required = True)
@@ -70,24 +72,24 @@ def main():
 
 	print('Fetching Last %s days of data for stock: %s' %(args['delta'], args['stock']))
 
-	# Get the historical data 
+	# Get the historical data
 	df = get_history(symbol=args['stock'], start= sTime, end= eTime)
 	df['LReturn'] = np.log(df.Close) - np.log(df['Prev Close']) # http://stackoverflow.com/questions/31287552/logarithmic-returns-in-pandas-dataframe
 
 	#Pick up the last using -1
 	lcp = df['Close'][df.index[-1]]
 	print('\nLast Close Price for stock: %s is: %s\n' % (args['stock'],lcp))
-	
+
 	# Calculate the average of LN returns and STDEV
 	l_avg 	= np.average(df['LReturn'])
 	l_stdv 	= np.std(df['LReturn'])
 	print('Daily volatility for %s is : %s ' %(args['stock'], round(l_stdv*100,2)))
-	
+
 	# Calculate the projected price for 1SD
 	l_f_upper, l_f_lower = get_1SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv)
 	l_u_expected = lcp * np.exp(l_f_upper)
 	l_l_expected = lcp * np.exp(l_f_lower)
-	
+
 	#Print the calculations
 	print('.....1SD......\n')
 	print('Expected Max price in %s days : %s' % (args['fdelta'],round(l_u_expected,2)))
@@ -108,7 +110,7 @@ def main():
 	if not write_excel(stock=args['stock'], dataframe=df):
 		print('Could not write successfully. Exiting')
 		exit()
-	
+
 if __name__ == "__main__":
     # execute only if run as a script
     main()
