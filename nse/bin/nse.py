@@ -18,7 +18,7 @@ import math
 
 
 def write_excel(dataframe=None, stock=None):
-    name = '/home/abhishek/Documents/pycharm/projects/test/data/stock_hist_%s.xlsx' % stock
+    name = '/home/abhishek/Documents/pycharm/projects/data/stock_hist_%s.xlsx' % stock
     print('Writing to excel')
     writer = pd.ExcelWriter(name, engine='xlsxwriter')
     # Convert the dataframe to an XlsxWriter Excel object.
