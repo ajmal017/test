@@ -81,6 +81,7 @@ def main():
 	# Calculate the average of LN returns and STDEV
 	l_avg 	= np.average(df['LReturn'])
 	l_stdv 	= np.std(df['LReturn'])
+	print('Daily volatility for %s is : %s ' %(args['stock'], round(l_stdv*100,2)))
 	
 	# Calculate the projected price for 1SD
 	l_f_upper, l_f_lower = get_1SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv)

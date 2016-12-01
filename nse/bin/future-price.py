@@ -40,9 +40,9 @@ def main():
 	rbirate = float(0.058602)
 	dte=22
 	print('\nLast Close Price for stock: %s is: %s\n' % (args['stock'],lcp))
-	print("Stock's - I: %s" % get_future_price(stockprice=lcp, dte1=dte, rbi_rate=rbirate))
-	print("Stock's - I: %s" % get_future_price(stockprice=lcp, dte1=int(dte + 22), rbi_rate=rbirate))
-	print("Stock's - I: %s" % get_future_price(stockprice=lcp, dte1=int(dte + 22 + 22), rbi_rate=rbirate))
+	print("Stock's - I  : %s" % get_future_price(stockprice=lcp, dte1=dte, rbi_rate=rbirate))
+	print("Stock's - II : %s" % get_future_price(stockprice=lcp, dte1=int(dte + 30), rbi_rate=rbirate))
+	print("Stock's - III: %s" % get_future_price(stockprice=lcp, dte1=int(dte + 60), rbi_rate=rbirate))
 
 if __name__ == "__main__":
     # execute only if run as a script
