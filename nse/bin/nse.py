@@ -18,6 +18,14 @@ import math
 
 stocksToPull = 'CAPF','SBIN','VEDL','ONGC','CUMMINSIND','PNB','BHEL','GAIL'
 
+def bBands(price, length=30, numsd=1):
+    """ returns average, upper band, and lower band"""
+    ave = pd.stats.moments.rolling_mean(price, length)
+    sd = pd.stats.moments.rolling_std(price, length)
+    upband = ave + (sd*numsd)
+    dnband = ave - (sd*numsd)
+    return np.round(ave,3), np.round(upband,3), np.round(dnband,3)
+
 def write_excel(dataframe=None, stock=None):
     name = '/home/abhishek/Documents/pycharm/projects/data/stock_hist_%s.xlsx' % stock
     print('Writing to excel')
