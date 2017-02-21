@@ -27,7 +27,8 @@ def bBands(price, length=30, numsd=1):
     return np.round(ave,3), np.round(upband,3), np.round(dnband,3)
 
 def write_excel(dataframe=None, stock=None):
-    name = '/home/abhishek/Documents/pycharm/projects/data/stock_hist_%s.xlsx' % stock
+    #name = '/home/abhishek/Documents/pycharm/projects/data/stock_hist_%s.xlsx' % stock
+    name = 'C:\\Users\\abhishek\PycharmProjects\\test\\data\\stock_hist_%s.xlsx' % stock
     print('Writing to excel')
     writer = pd.ExcelWriter(name, engine='xlsxwriter')
     # Convert the dataframe to an XlsxWriter Excel object.
@@ -79,7 +80,8 @@ def get_3SD(fdelta=None, l_avg=None, l_stdv=None):
 
 def yahoo_pull(stock):
     pullData(stock)
-    savedFile = '/home/abhishek/Documents/pycharm/projects/test/data/' + stock + '.csv'
+    savedFile = 'C:\Users\\abhishek\PycharmProjects\\test\\data' + stock + '.csv'
+    #savedFile = '/home/abhishek/Documents/pycharm/projects/test/data/' + stock + '.csv'
     try:
         readdata = open(savedFile, 'r').read()
         splitread = readdata.split('\n')
@@ -145,9 +147,10 @@ def main():
     l_l_expected = lcp * np.exp(l_f_lower)
 
     # Print the calculations
+    print('Historical Vol~~~~')
     print('\n\t.....1SD......I am 68.27% sure about it')
-    print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
-    print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
+    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
+    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
     print
 
     # Now work for the 2SD
@@ -156,17 +159,17 @@ def main():
     l_l_expected = lcp * np.exp(l_f_lower)
     # Print the calculations
     print('\n\t.....2SD......I am 95.45% sure about it')
-    print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
-    print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
+    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
+    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
 
     # Now work on 3SD
     l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=3)
     l_u_expected = lcp * np.exp(l_f_upper)
     l_l_expected = lcp * np.exp(l_f_lower)
     # Print the calculations
-    print('\n\t.....2SD......I am 99.7% sure about it')
-    print('Expected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
-    print('Expected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
+    print('\n\t.....3SD......I am 99.7% sure about it')
+    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(l_u_expected, 2)))
+    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(l_l_expected, 2)))
 
     # Save to excel
     if not write_excel(stock=args['stock'], dataframe=df):

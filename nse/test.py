@@ -1,24 +1,20 @@
-import datetime
-import argparse
-from datetime import date
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.finance as mpf
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas.io.data as web
+import math
+import pandas as pd
 
-parser = argparse.ArgumentParser(description='STOCK volatility calculator')
-#parser.add_argument('-s', '--stock', help='NSE stock symbol', required=True)
-parser.add_argument('-d','--delta', help='Start date', required=True)
-args = vars(parser.parse_args())
+start=(2016,12,1)
+end = (2017,2,1)
 
-today = datetime.date.today()
-delta = datetime.timedelta(days=int(args['delta']))
+DAX = web.DataReader(name='GOOG',data_source='google',start=start)
+#DAX['Close'].plot(figsize=(10,5))
 
-yesterday = today - delta
+DAX['Return'] = np.log(DAX['Close'] / DAX['Close'].shift(1))
+#DAX[['Return']].plot(figsize=(8,5))
+DAX['Mov_Vol'] = pd.rolling_std(DAX['Return'], window=252) * math.sqrt(252)
+DAX[['Close','Mov_Vol','Return']].plot(subplots=True, style='b',figsize=(8,7))
 
-print today
-print yesterday
-
-print 'Year:', today.year
-print 'Mon :', today.month
-print 'Day :', today.day
-
-print
-
-print(date(today.year,today.month, today.day))
+plt.show()
