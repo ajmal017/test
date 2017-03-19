@@ -1,5 +1,9 @@
 import urllib, time, datetime
-import argparse
+import pandas as pd
+import plotly.plotly as py
+from plotly.tools import FigureFactory as FF
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Quote(object):
 
@@ -63,11 +67,60 @@ class GoogleIntradayQuote(Quote):
                 dt = datetime.datetime.fromtimestamp(day + (interval_seconds * offset))
                 self.append(dt, open_, high, low, close, volume)
 
-def main():
-    parser = argparse.ArgumentParser(description='STOCK volatility calculator')
-    parser.add_argument('-s', '--stock', help='NSE stock symbol', required=True)
-    args = vars(parser.parse_args())
-    q = GoogleIntradayQuote(args['stock'])
-    print q  # print it out
 if __name__ == '__main__':
-    main()
+
+        interval_seconds = 900
+        days = 30
+        tick = 'PNB'
+
+        try:
+            q = GoogleIntradayQuote(tick, interval_seconds, days)
+            vix = GoogleIntradayQuote('INDIAVIX',interval_seconds, days)
+
+        except Exception, e:
+            print str(e)
+            exit(1)
+            #print q  # print it out
+        tickFile = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s.csv' % tick
+        vixFile = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/VIX.csv'
+        q.write_csv(tickFile)
+        vix.write_csv(vixFile)
+
+        dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
+
+        dfTick = pd.read_csv(tickFile, sep=',', header=None, parse_dates={'datetime': [1, 2]},
+                         date_parser=dateparse)
+        dfTick.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
+
+        dfVIX = pd.read_csv(vixFile, sep=',', header=None, parse_dates={'datetime': [1, 2]}, date_parser=dateparse)
+        dfVIX.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
+
+        data = pd.DataFrame({'Stock' :
+                             dfTick['Close']})
+        data = data.join(pd.DataFrame({'VIX' : dfVIX['Close']}))
+        data = data.fillna(method='ffill')
+        print data.head()
+        #data.plot(subplots=True, grid=True, style='b',figsize=(8,6))
+
+
+        rets = np.log(data / data.shift(1))
+        #rets.plot(subplots=True, grid=True, style='b',figsize=(10,6))
+        print rets.head()
+
+        #Regression Analysis
+        xdat = rets['Stock']
+        ydat = rets['VIX']
+        model = pd.ols(y=ydat,x=xdat)
+        print model.beta
+        plt.plot(xdat, ydat, 'r.')
+        ax = plt.axis()
+        x = np.linspace(ax[0],ax[1]+0.01)
+        plt.plot(x, model.beta[1] + model.beta[0] * x, 'b', lw=2)
+        plt.grid(True)
+        plt.axis('tight')
+        plt.xlabel('Stock returns : %s' % tick)
+        plt.ylabel('India VIX returns')
+        #plt.show()
+        print rets.corr()
+        pd.rolling_corr(rets['Stock'], rets['VIX'], window=252).plot(grid=True, style='b')
+        plt.show()

@@ -1,4 +1,9 @@
 import urllib, time, datetime
+import pandas as pd
+from datetime import date
+import plotly.plotly as py
+from plotly.tools import FigureFactory as FF
+from datetime import datetime
 
 class Quote(object):
 
@@ -63,5 +68,20 @@ class GoogleIntradayQuote(Quote):
                 self.append(dt, open_, high, low, close, volume)
 
 if __name__ == '__main__':
-        q = GoogleIntradayQuote('SBIN', 900, 30)
-        print q  # print it out
+        q = GoogleIntradayQuote('VIX', 900, 30)
+        #print q  # print it out
+        filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/tick.csv'
+        q.write_csv(filename)
+
+        dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
+        df = pd.read_csv(filename, sep=',', header=None, parse_dates={'datetime': [1, 2]},
+                         date_parser=dateparse)
+        df.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
+        # df.index = df['Datetime']
+        # df.index.name = None
+        fig = FF.create_candlestick(df.Open, df.High, df.Low, df.Close, dates=df.index)
+        fig['layout'].update({
+            'title': 'RCOM Intraday Charts',
+            'yaxis': {'title': 'RCOM Stock'}})
+        py.iplot(fig, filename='finance/intraday-candlestick', validate=False)
+        plt.show()
