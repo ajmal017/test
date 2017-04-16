@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import date
 import plotly.plotly as py
 from plotly.tools import FigureFactory as FF
-from datetime import datetime
+import datetime
 
 class Quote(object):
 
@@ -49,7 +49,8 @@ class Quote(object):
 class GoogleIntradayQuote(Quote):
         ''' Intraday quotes from Google. Specify interval seconds and number of days '''
 
-        def __init__(self, symbol, interval_seconds=900, num_days=22):
+        def __init__(self, symbol, interval_seconds, num_days):
+            global day
             super(GoogleIntradayQuote, self).__init__()
             self.symbol = symbol.upper()
             url_string = "http://www.google.com/finance/getprices?q={0}".format(self.symbol)
@@ -68,20 +69,24 @@ class GoogleIntradayQuote(Quote):
                 self.append(dt, open_, high, low, close, volume)
 
 if __name__ == '__main__':
-        q = GoogleIntradayQuote('VIX', 900, 30)
-        #print q  # print it out
+
+        interval = 900 # 15 minutes
+        lookback = 22
+        tick = 'SBIN'
+        q = GoogleIntradayQuote(tick, interval, lookback)
+        print q  # print it out
         filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/tick.csv'
         q.write_csv(filename)
 
-        dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
-        df = pd.read_csv(filename, sep=',', header=None, parse_dates={'datetime': [1, 2]},
-                         date_parser=dateparse)
-        df.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
+        #dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
+        #df = pd.read_csv(filename, sep=',', header=None, parse_dates={'datetime': [1, 2]},
+        #                date_parser=dateparse)
+        #df.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
         # df.index = df['Datetime']
         # df.index.name = None
-        fig = FF.create_candlestick(df.Open, df.High, df.Low, df.Close, dates=df.index)
-        fig['layout'].update({
-            'title': 'RCOM Intraday Charts',
-            'yaxis': {'title': 'RCOM Stock'}})
-        py.iplot(fig, filename='finance/intraday-candlestick', validate=False)
-        plt.show()
+        #fig = FF.create_candlestick(df.Open, df.High, df.Low, df.Close, dates=df.index)
+        #fig['layout'].update({
+        #    'title': 'RCOM Intraday Charts',
+        #    'yaxis': {'title': 'RCOM Stock'}})
+        #py.iplot(fig, filename='finance/intraday-candlestick', validate=False)
+        #py.show()

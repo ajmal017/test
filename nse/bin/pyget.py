@@ -4,7 +4,7 @@ import datetime as dt
 import numpy as np
 import os
 
-stockToPull = 'VEDL.NS','SBIN.NS','CAPF.NS','ONGC.NS'
+stockToPull = 'VEDL.NS','SBIN.NS','CAPF.NS','VAKRANGEE.NS'
 
 def pullData(stock):
     try:
@@ -12,14 +12,14 @@ def pullData(stock):
         print 'Current time is: ',str(dt.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S'))
         urlToVisit = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=10d/csv'
         #urlToVisit = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+stock+'/chartdata;type=quote;range=1y/csv'
-        saveFileLine = '/home/abhishek/Documents/pycharm/projects/test/data/'+stock+'.csv'
+        saveFileLine = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/'+stock+'.csv'
 
         try:
             readExistingData = open(saveFileLine,'r').read()
             splitExisting = readExistingData.split('\n')
             mostRecentLine = splitExisting[-2]
             lastUnix = mostRecentLine.split(',')[0]
-            print('File exists.')
+            print('Data File exists.')
         except Exception,e:
             print str(e)
             time.sleep(5)
