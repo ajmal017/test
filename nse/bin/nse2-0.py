@@ -3,6 +3,8 @@
 Author : Abhishek Chaturvedi
 version: 2.0
 """
+#Refer:
+#http://gouthamanbalaraman.com/blog/calculating-stock-beta.html
 
 from nsepy import get_history, get_index_pe_history
 from nsepy.archives import get_price_history
@@ -11,11 +13,14 @@ import datetime
 import time
 import json
 import argparse
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from googlefinance import getQuotes
 import pandas as pd
 import numpy as np
 import math
+import pandas.io.data as web
+import scipy.stats as stats
+import pylab as plt
 
 stocksToPull = 'CAPF','SBIN','VEDL','ONGC','CUMMINSIND','PNB','BHEL','GAIL'
 
@@ -41,7 +46,7 @@ def write_excel(dataframe=None, stock=None):
     return True
 
 
-def get_SD(fdelta, l_avg, l_stdv,sd):
+def get_SD(fdelta, l_avg, l_stdv,sd, currentPrice):
     # Calculate the projected average
     avg = float(fdelta) * float(l_avg)
     # Calculate the projected standard deviation
@@ -50,7 +55,48 @@ def get_SD(fdelta, l_avg, l_stdv,sd):
     upper = avg + stdv*sd
     lower = avg - stdv*sd
 
+    f_upper_expected = currentPrice * np.exp(upper)
+    f_lower_expected = currentPrice * np.exp(lower)
+
+    stanDev = {1 : '68.27%', 2 : '95.4%', 3 : '99.7%'}
+    # Print the calculations
+    print('Historical Vol~~~~')
+    print('\n\t.....%sSD......I am %s sure about it' %(sd, stanDev[sd]))
+    print('\tExpected Max price in %s days : %s' % (fdelta, round(f_upper_expected, 2)))
+    print('\tExpected Min price in %s days : %s' % (fdelta, round(f_lower_expected, 2)))
+
+
     return upper, lower
+
+
+def stop_loss_HV(dailyVol, fdelta, currentPrice):
+
+    estimated_volatility = dailyVol * np.sqrt(fdelta)
+    ceiling = round(currentPrice * (1 + estimated_volatility ),2)
+    floor   = round(currentPrice * (1 - estimated_volatility ),2)
+
+    return floor, ceiling
+
+def stop_loss_IV(dailyIV, fdelta, currentPrice):
+
+    estimated_volatility = dailyIV * np.sqrt(fdelta)
+    ceiling = round(currentPrice * ( 1 + estimated_volatility),2)
+    floor = round(currentPrice * ( 1 + estimated_volatility), 2)
+
+    return floor, ceiling
+
+def risk_reward(postitionSize, floor, ceiling, currentPrice, long):
+
+    if long:
+        risk = (postitionSize * (currentPrice - floor))
+        reward = (postitionSize * (ceiling - currentPrice))
+    else:
+        risk = (postitionSize * (ceiling - currentPrice))
+        reward = (postitionSize * (currentPrice - floor))
+
+    print('I stand to loose: %s' % risk)
+    print('I stand to gain: %s' % reward)
+    return round(risk/reward,2)
 
 
 def yahoo_pull(stock):
@@ -69,7 +115,7 @@ def yahoo_pull(stock):
 
 def getcurrent(stock):
     try:
-        cp = getQuotes(symbols='NSE:'+stock)
+        cp = getQuotes(symbols=stock+'.NS')
     except Exception,e:
         print 'getcurrent failed: ', str(e)
 
@@ -80,6 +126,11 @@ def getcurrent(stock):
 
     return returnValue
 
+def getdata(stock, source,start,end):
+    tick = stock+'.NS'
+    df = web.DataReader(tick, data_source = source, start=start, end=end)
+
+    return df
 
 def main():
     parser = argparse.ArgumentParser(description='STOCK volatility calculator')
@@ -87,6 +138,8 @@ def main():
     parser.add_argument('-s', '--stock', help='NSE stock symbol', required=True)
     parser.add_argument('-d', '--delta', help='Start date', required=True)
     parser.add_argument('-f', '--fdelta', help='Future days for which you are hoping for', required=True)
+    parser.add_argument('-p', '--position', help='Position Size', required=True)
+    parser.add_argument('-b', '--buy', help='Flag if you are buying', required=True)
     args = vars(parser.parse_args())
 
     # Initialize
@@ -96,60 +149,60 @@ def main():
     f_delta = datetime.timedelta(days=int(args['fdelta']))
     fTime = eTime + f_delta
 
+    #long = True if args['buy'] else False
+    long = False
+    one_year = 365
     print('Fetching Last %s days of data for stock: %s' % (args['delta'], args['stock']))
 
     # Get the historical data
-    df = get_history(symbol=args['stock'], start=sTime, end=eTime)
-    df['LReturn'] = np.log(df['Close'] / df['Close'].shift(1))
-    #df['LReturn'] = np.log(df.Close) - np.log(df['Prev Close']) # http://stackoverflow.com/questions/31287552/logarithmic-returns-in-pandas-dataframe
+    #df = get_history(symbol=args['stock'], start=sTime, end=eTime)
+    df = getdata(args['stock'], source='yahoo',start=sTime,end=eTime)
+    #Calculate the Log Returns
+    df['Log_Ret'] = np.log(df['Adj Close'] / df['Adj Close'].shift(1))
+    #df['Log_Ret'] = np.log(df['Adj Close']) - np.log(df['Adj Close'].shift(1)) #http://stackoverflow.com/questions/31287552/logarithmic-returns-in-pandas-dataframe
 
     # Pick up the last using -1
     if args['current']=='C':
         lcp = getcurrent(stock=args['stock'])
     else:
-        lcp = df['Close'][df.index[-1]]
+        lcp = df['Adj Close'][df.index[-1]]
 
     print('\nLast Close Price for stock: %s is: %s\n' % (args['stock'], lcp))
 
     # Calculate the average of LN returns and STDEV
     df = df.dropna()
-    l_avg = np.average(df['LReturn'])
-    l_stdv = np.std(df['LReturn'])
+    l_avg = np.average(df['Log_Ret'])
+    l_stdv = np.std(df['Log_Ret'])
 
-    df['Volatility'] = pd.rolling_std(df['LReturn'], window = int(args['delta'])) * np.sqrt(int(args['delta']))
-    #df['Volatility'] = pd.Series(df['LReturn']).rolling(window = int(args['delta']), center=False).std()
+    print 'l_stdv', l_stdv
+    print df['Log_Ret'].tail()
+
+    #Calculate the rolling standard deviation of the log returns
+    #df['rollingdHV'] = pd.rolling_std(df['Log_Ret'],window = int(args['delta'])) * np.sqrt(int(args['delta']))
+    df['rollingdHV'] = pd.Series(df['Log_Ret']).rolling(int(args['delta'])).std() * np.sqrt(int(args['delta']))
+    print df['rollingdHV'].tail(10)
+    time.sleep(50)
+    daily_rolling_IV = df['rollingdHV'][df.index[-1]]
+    annualIV = daily_rolling_IV * np.sqrt(one_year)
+    df = df['rollingdHV'].dropna()
+    #df['Volatility'] = pd.Series(df['Log_Ret']).rolling(window = int(args['delta']), center=False).std()
+
     print('Historical Daily volatility for %s over the last %s days is : %s ' % (args['stock'],args['delta'], l_stdv))
-    print('Annual Volatility for %s is: %s' %(args['stock'], round(l_stdv * np.sqrt(252) * 100 ,2)))
-    #print('Daily calculated volatility: %s' % df['Volatility'].tail(22))
+    print('Annual Volatility for %s is: %s' % (args['stock'], round(l_stdv * np.sqrt(one_year) * 100, 2)))
+    print('Daily Rolling volatility for %s over the last %s days is : %s' % (args['stock'], args['delta'], daily_rolling_IV))
+    print('Daily Rolling Annual Volatility for %s is: %s' % (args['stock'], annualIV))
+
     # Calculate the projected price for 1SD
-    l_f_upper, l_f_lower = get_SD(fdelta=float(args['fdelta']), l_avg=l_avg, l_stdv=l_stdv, sd=1)
-    f_upper_expected = lcp * np.exp(l_f_upper)
-    f_lower_expected = lcp * np.exp(l_f_lower)
+    for i in [1,2,3]:
+        get_SD(fdelta=float(args['fdelta']), l_avg=l_avg, l_stdv=l_stdv, sd=i, currentPrice=lcp)
 
-    # Print the calculations
-    print('Historical Vol~~~~')
-    print('\n\t.....1SD......I am 68.27% sure about it')
-    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(f_upper_expected, 2)))
-    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(f_lower_expected, 2)))
-    print
-
-    # Now work for the 2SD
-    l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=2)
-    f_upper_expected = lcp * np.exp(l_f_upper)
-    f_lower_expected = lcp * np.exp(l_f_lower)
-    # Print the calculations
-    print('\n\t.....2SD......I am 95.45% sure about it')
-    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(f_upper_expected, 2)))
-    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(f_lower_expected, 2)))
-
-    # Now work on 3SD
-    l_f_upper, l_f_lower = get_SD(fdelta=args['fdelta'], l_avg=l_avg, l_stdv=l_stdv, sd=3)
-    f_upper_expected = lcp * np.exp(l_f_upper)
-    f_lower_expected = lcp * np.exp(l_f_lower)
-    # Print the calculations
-    print('\n\t.....3SD......I am 99.7% sure about it')
-    print('\tExpected Max price in %s days : %s' % (args['fdelta'], round(f_upper_expected, 2)))
-    print('\tExpected Min price in %s days : %s' % (args['fdelta'], round(f_lower_expected, 2)))
+    floor, ceiling = stop_loss_HV(dailyVol=l_stdv, fdelta=float(args['fdelta']), currentPrice=lcp)
+    print('\nSTOP LOSS Projections:')
+    print('Based on the fdelta; floor of price = %s & ceiling '
+          'of price = %s' % (stop_loss_HV( dailyVol=l_stdv,
+                                           fdelta=float(args['fdelta']), currentPrice= lcp)))
+    print('Risk:Reward = %s' %( risk_reward(postitionSize=int(args['position']),
+                                            floor=floor, ceiling=ceiling, currentPrice=lcp, long=True)))
 
     # Save to excel
     if not write_excel(stock=args['stock'], dataframe=df):
@@ -157,8 +210,10 @@ def main():
         exit()
 
     #Visualize
-    df['LReturn'].hist(figsize=(8,6), color='blue',bins=50)
-    plt.show()
+    #df['Log_Ret'].hist(figsize=(8,6), color='blue',bins=50)
+    #Plot the Log Return
+    #df['Log_Ret'].plot(grid=True).axhline(y = 0, color='black', lw=2)
+    #plt.show()
 
 
 if __name__ == "__main__":
