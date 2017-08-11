@@ -110,5 +110,5 @@ min_periods = 75
 vol = pd.rolling_std(daily_pct_change, min_periods) * \
                      np.sqrt(min_periods)
 # plot it
-_ = vol.plot(figsize=(10, 8));
+_ = vol.plot(figsize=(10, 8))
 plt.savefig('5104OS_05_22.png', bbox_inches='tight', dpi=300)
