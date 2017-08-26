@@ -35,7 +35,7 @@ def main():
     todays_date = dt.date.today().strftime(format)
 
     #directory = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s' % todays_date
-    directory = 'C:\\Users\\abhishek\\PycharmProjects\\test\\nse\\bin\\%s' % todays_date
+    directory = 'C:\\Users\\abhishek\\PycharmProjects\\test\\data\\%s' % todays_date
 
     if not os.path.isdir(directory):
         os.makedirs(directory)
