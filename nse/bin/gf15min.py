@@ -71,12 +71,16 @@ class GoogleIntradayQuote(Quote):
 if __name__ == '__main__':
 
         interval = 900 # 15 minutes
-        lookback = 22
-        tick = 'SBIN'
-        q = GoogleIntradayQuote(tick, interval, lookback)
-        print q  # print it out
-        filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/tick.csv'
-        q.write_csv(filename)
+        lookback = 52
+        basket = ['NIFTY','MOTHERSUMI','MARUTI','SBIN','MGL','ONGC','PNB','VAKRANGEE','VEDL','IBULHSGFIN']
+
+        for tick in basket:
+            q = GoogleIntradayQuote(tick, interval, lookback)
+            print 'Downloaded : %s' %tick
+            #print q  # print it out
+            #filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/tick.csv'
+            filename = 'C:\\Users\\abhishek\\Downloads\\gf-data\\15min\\%s_15min.csv' % tick
+            q.write_csv(filename)
 
         #dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
         #df = pd.read_csv(filename, sep=',', header=None, parse_dates={'datetime': [1, 2]},

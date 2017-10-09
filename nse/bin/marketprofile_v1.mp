@@ -10,7 +10,7 @@ GfxSelectFont("Arial", Status("pxheight")/27 );
 _SECTION_END();
 
 
-PlotOHLC(O,H,L,C,"Price",IIf(C>O,colorGreen,colorR ed),styleCandle);
+PlotOHLC(O,H,L,C,"Price",IIf(C>O,colorGreen,colorRed),styleCandle);
 _N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
 
 
