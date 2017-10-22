@@ -54,7 +54,7 @@ class GoogleIntradayQuote(Quote):
             super(GoogleIntradayQuote, self).__init__()
             self.symbol = symbol.upper()
             url_string = "https://finance.google.com/finance/getprices?q={0}".format(self.symbol)
-            url_string += "&x=NSE&i={0}&p={1}d&f=d,o,h,l,c,v".format(interval_seconds, num_days)
+            url_string += "&x=CURRENCY&i={0}&p={1}d&f=d,o,h,l,c,v".format(interval_seconds, num_days)
             csv = urllib.urlopen(url_string).readlines()
             for bar in xrange(7, len(csv)):
                 if csv[bar].count(',') != 5: continue
@@ -70,26 +70,13 @@ class GoogleIntradayQuote(Quote):
 
 if __name__ == '__main__':
 
-        interval = 900 # 15 minutes
-        lookback = 52
-        basket = ['NIFTY','MOTHERSUMI','MARUTI','SBIN','MGL','ONGC','PNB','VAKRANGEE','VEDL','IBULHSGFIN']
+        interval = 1800 # 30 minutes
+        lookback = 5 #Last 5 days
+        basket = ['AUD','JPY','EUR']
 
         for tick in basket:
             q = GoogleIntradayQuote(tick, interval, lookback)
             print 'Downloaded : %s' %tick
-            filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s_15min.csv' % tick
+            filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s_currency-30min.csv' % tick
             #filename = 'C:\\Users\\abhishek\\Downloads\\gf-data\\15min\\%s_15min.csv' % tick
             q.write_csv(filename)
-
-        #dateparse = lambda x: pd.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
-        #df = pd.read_csv(filename, sep=',', header=None, parse_dates={'datetime': [1, 2]},
-        #                date_parser=dateparse)
-        #df.columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
-        # df.index = df['Datetime']
-        # df.index.name = None
-        #fig = FF.create_candlestick(df.Open, df.High, df.Low, df.Close, dates=df.index)
-        #fig['layout'].update({
-        #    'title': 'RCOM Intraday Charts',
-        #    'yaxis': {'title': 'RCOM Stock'}})
-        #py.iplot(fig, filename='finance/intraday-candlestick', validate=False)
-        #py.show()

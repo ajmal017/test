@@ -70,14 +70,14 @@ class GoogleIntradayQuote(Quote):
 
 if __name__ == '__main__':
 
-        interval = 900 # 15 minutes
-        lookback = 52
+        interval = 60 # 15 minutes
+        lookback = 10
         basket = ['NIFTY','MOTHERSUMI','MARUTI','SBIN','MGL','ONGC','PNB','VAKRANGEE','VEDL','IBULHSGFIN']
 
         for tick in basket:
             q = GoogleIntradayQuote(tick, interval, lookback)
             print 'Downloaded : %s' %tick
-            filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s_15min.csv' % tick
+            filename = '/Users/abhishek.chaturvedi/PycharmProjects/self/test/data/%s_1min.csv' % tick
             #filename = 'C:\\Users\\abhishek\\Downloads\\gf-data\\15min\\%s_15min.csv' % tick
             q.write_csv(filename)
 
