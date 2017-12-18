@@ -2,36 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="446655f6-6357-49ac-bac6-fab4422c23b6" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/CAPF.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/PNB.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/SBIN.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/SBIN.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/VAKRANGEE.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/VEDL.NS.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/es.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/stock_hist_BHEL.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/stock_hist_SBIN.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/tick.csv" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/vs.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/data/~$stock_hist_SBIN.xlsx" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/3dPlotting.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/cointegration.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/european.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/montecarlo.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/nifty50.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/nse.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/pytables.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/python-for-finance-1.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/screener.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/tcsv.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/test.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/nse/volatility.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/test.iml" afterPath="$PROJECT_DIR$/.idea/test.iml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/data/VIX.csv" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data/VIX.csv" afterPath="$PROJECT_DIR$/data/VIX.csv" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nse/bin/nse4.py" afterPath="$PROJECT_DIR$/nse/bin/nse4.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nse/bin/test.py" afterPath="$PROJECT_DIR$/nse/bin/test.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nse/bin/gf15min.py" afterPath="$PROJECT_DIR$/nse/bin/gf15min.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nse/bin/gf30min.py" afterPath="$PROJECT_DIR$/nse/bin/gf30min.py" />
     </list>
     <ignored path="test.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -61,10 +35,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="nse4.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="nse4.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nse/bin/nse4.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1095">
+            <state relative-caret-position="740">
               <caret line="112" column="8" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="29" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
@@ -75,14 +49,80 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="options-scrape.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/options-scrape.py">
+      <file leaf-file-name="test-tpo.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/test-tpo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1620">
-              <caret line="108" column="0" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
+            <state relative-caret-position="836">
+              <caret line="982" column="12" selection-start-line="982" selection-start-column="12" selection-end-line="982" selection-end-column="12" />
               <folding>
-                <element signature="e#0#14#0" expanded="true" />
+                <element signature="e#99#118#0" expanded="true" />
+                <element signature="e#9617#10162#0" expanded="false" />
+                <element signature="e#10182#19559#0" expanded="false" />
+                <element signature="e#19590#19724#0" expanded="false" />
+                <element signature="e#22760#22968#0" expanded="false" />
+                <element signature="e#22994#23041#0" expanded="false" />
+                <element signature="e#23077#23629#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="marketprofile.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/marketprofile.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-121">
+              <caret line="48" column="20" selection-start-line="48" selection-start-column="7" selection-end-line="48" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ib-poc.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/ib-poc.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="324">
+              <caret line="498" column="23" selection-start-line="498" selection-start-column="17" selection-end-line="498" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gf15min.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/gf15min.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="67" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gf30min.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/nse/bin/gf30min.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="429">
+              <caret line="70" column="26" selection-start-line="70" selection-start-column="26" selection-end-line="70" selection-end-column="26" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gf1min.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/gf1min.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="84">
+              <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pyget.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/nse/bin/pyget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="495">
+              <caret line="37" column="51" selection-start-line="16" selection-start-column="0" selection-end-line="37" selection-end-column="51" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -90,7 +130,7 @@
       <file leaf-file-name="gfinance.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nse/bin/gfinance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
+            <state relative-caret-position="120">
               <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
@@ -102,32 +142,10 @@
       <file leaf-file-name="cmvolt_download.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nse/bin/cmvolt_download.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
+            <state relative-caret-position="510">
               <caret line="41" column="24" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
               <folding>
                 <element signature="e#66#84#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fovolt.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/fovolt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="48" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fdelta-volt.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/fdelta-volt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2055">
-              <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
-              <folding>
-                <element signature="e#137#149#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -186,6 +204,10 @@
         <option value="$PROJECT_DIR$/nse/bin/fdelta-volt.py" />
         <option value="$PROJECT_DIR$/nse/bin/nse4.py" />
         <option value="$PROJECT_DIR$/nse/bin/test.py" />
+        <option value="$PROJECT_DIR$/nse/bin/gf15min.py" />
+        <option value="$PROJECT_DIR$/nse/bin/gf1min.py" />
+        <option value="$PROJECT_DIR$/nse/bin/test-tpo.py" />
+        <option value="$PROJECT_DIR$/nse/bin/gf30min.py" />
       </list>
     </option>
   </component>
@@ -196,10 +218,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1643" />
-    <option name="y" value="53" />
-    <option name="width" value="1440" />
-    <option name="height" value="839" />
+    <option name="x" value="2034" />
+    <option name="y" value="23" />
+    <option name="width" value="1232" />
+    <option name="height" value="986" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -227,6 +249,7 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -283,7 +306,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -671,27 +693,27 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1643" y="53" width="1440" height="839" extended-state="0" />
+    <frame x="2034" y="23" width="1232" height="986" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13018598" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1882353" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16810344" sideWeight="0.5037116" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32797858" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29765886" sideWeight="0.49628845" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22350231" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32797858" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29765886" sideWeight="0.49628845" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -701,10 +723,10 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16810344" sideWeight="0.5037116" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29852745" sideWeight="0.49628845" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32920793" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21609403" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22350231" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29765886" sideWeight="0.49628845" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32797858" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18839712" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32899022" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -732,18 +754,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/nse/screener.py" />
-    <entry file="file://$PROJECT_DIR$/nse/bin/pyget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nse/cointegration.py" />
-    <entry file="file://$PROJECT_DIR$/bin/pyget.py" />
-    <entry file="file://$PROJECT_DIR$/bin/plot.py" />
-    <entry file="file://$PROJECT_DIR$/nse/cointegration.py" />
     <entry file="file://$PROJECT_DIR$/bin/pyget.py" />
     <entry file="file://$PROJECT_DIR$/bin/plot.py" />
     <entry file="file://$PROJECT_DIR$/pyget.py" />
@@ -783,13 +793,6 @@
     <entry file="file://$PROJECT_DIR$/nse/bin/blackscholes-function.py" />
     <entry file="file://$PROJECT_DIR$/nse/bin/option.py" />
     <entry file="file://$PROJECT_DIR$/nse/bin/options.py" />
-    <entry file="file://$PROJECT_DIR$/nse/bin/pyget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="36" column="35" selection-start-line="36" selection-start-column="24" selection-end-line="36" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/blackscholes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1395">
@@ -801,66 +804,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3540">
           <caret line="564" column="24" selection-start-line="564" selection-start-column="24" selection-end-line="564" selection-end-column="24" />
-          <folding>
-            <element signature="e#595#778#0" expanded="false" />
-            <element signature="e#595#755#1" expanded="false" />
-            <element signature="e#832#1202#0" expanded="false" />
-            <element signature="e#832#1035#1" expanded="false" />
-            <element signature="e#1255#1625#0" expanded="false" />
-            <element signature="e#1255#1456#1" expanded="false" />
-            <element signature="e#1644#1727#0" expanded="false" />
-            <element signature="e#1644#1676#1" expanded="false" />
-            <element signature="e#1767#2060#0" expanded="false" />
-            <element signature="e#1767#1959#1" expanded="false" />
-            <element signature="e#2099#2396#0" expanded="false" />
-            <element signature="e#2099#2289#1" expanded="false" />
-            <element signature="e#2431#2738#0" expanded="false" />
-            <element signature="e#2431#2613#1" expanded="false" />
-            <element signature="e#2772#3079#0" expanded="false" />
-            <element signature="e#2772#2952#1" expanded="false" />
-            <element signature="e#3119#3544#0" expanded="false" />
-            <element signature="e#3119#3311#1" expanded="false" />
-            <element signature="e#3583#4007#0" expanded="false" />
-            <element signature="e#3583#3773#1" expanded="false" />
-            <element signature="e#4045#4414#0" expanded="false" />
-            <element signature="e#4045#4233#1" expanded="false" />
-            <element signature="e#4451#4820#0" expanded="false" />
-            <element signature="e#4451#4637#1" expanded="false" />
-            <element signature="e#4918#5319#0" expanded="false" />
-            <element signature="e#4918#5239#1" expanded="false" />
-            <element signature="e#5419#6662#0" expanded="false" />
-            <element signature="e#5419#5868#1" expanded="false" />
-            <element signature="e#6088#6269#0" expanded="false" />
-            <element signature="e#6355#6536#0" expanded="false" />
-            <element signature="e#6758#7157#0" expanded="false" />
-            <element signature="e#6758#7079#1" expanded="false" />
-            <element signature="e#7255#8491#0" expanded="false" />
-            <element signature="e#7255#7703#1" expanded="false" />
-            <element signature="e#7919#8098#0" expanded="false" />
-            <element signature="e#8184#8365#0" expanded="false" />
-            <element signature="e#8537#9119#0" expanded="false" />
-            <element signature="e#8537#8689#1" expanded="false" />
-            <element signature="e#9174#10196#0" expanded="false" />
-            <element signature="e#9174#9344#1" expanded="false" />
-            <element signature="e#10433#11184#0" expanded="false" />
-            <element signature="e#10433#10725#1" expanded="false" />
-            <element signature="e#11212#11690#0" expanded="false" />
-            <element signature="e#11212#11346#1" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/nse3.py" />
-    <entry file="file://$PROJECT_DIR$/nse/bin/gf15min.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1410">
-          <caret line="81" column="49" selection-start-line="81" selection-start-column="49" selection-end-line="81" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#29#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/nse/volatility.py" />
     <entry file="file://$PROJECT_DIR$/nse/bin/cmvolt-download.py" />
     <entry file="file://$PROJECT_DIR$/nse/nifty50.py" />
@@ -894,20 +841,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/options-scrape.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1620">
+        <state relative-caret-position="1575">
           <caret line="108" column="0" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/fdelta-volt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2055">
+        <state relative-caret-position="1920">
           <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
           <folding>
-            <element signature="e#137#149#0" expanded="true" />
+            <element signature="e#137#149#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -922,7 +869,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/gfinance.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="120">
           <caret line="9" column="22" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
@@ -932,7 +879,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/cmvolt_download.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
+        <state relative-caret-position="510">
           <caret line="41" column="24" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
           <folding>
             <element signature="e#66#84#0" expanded="true" />
@@ -944,21 +891,92 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="85" column="0" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/nse4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1095">
+        <state relative-caret-position="740">
           <caret line="112" column="8" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="29" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
             <element signature="e#516#1046#0" expanded="false" />
             <element signature="e#1135#1682#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/test-win.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#21#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/marketprofile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-121">
+          <caret line="48" column="20" selection-start-line="48" selection-start-column="7" selection-end-line="48" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/pyget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="37" column="51" selection-start-line="16" selection-start-column="0" selection-end-line="37" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/ib-poc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="498" column="23" selection-start-line="498" selection-start-column="17" selection-end-line="498" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/gf1min.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/test-tpo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="836">
+          <caret line="982" column="12" selection-start-line="982" selection-start-column="12" selection-end-line="982" selection-end-column="12" />
+          <folding>
+            <element signature="e#99#118#0" expanded="true" />
+            <element signature="e#9617#10162#0" expanded="false" />
+            <element signature="e#10182#19559#0" expanded="false" />
+            <element signature="e#19590#19724#0" expanded="false" />
+            <element signature="e#22760#22968#0" expanded="false" />
+            <element signature="e#22994#23041#0" expanded="false" />
+            <element signature="e#23077#23629#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/gf15min.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="67" column="30" selection-start-line="0" selection-start-column="0" selection-end-line="95" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/gf30min.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="70" column="26" selection-start-line="70" selection-start-column="26" selection-end-line="70" selection-end-column="26" />
+          <folding />
         </state>
       </provider>
     </entry>
