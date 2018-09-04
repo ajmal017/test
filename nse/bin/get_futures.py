@@ -1,28 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #Abhishek v1.0
 # Date : Aug/31/2018
 # To get NIFTY individual stocks futures converted to dataframes
 import nsepy
 from datetime import date, datetime
+import time,os
+import numpy as np
 import pandas as pd
 import argparse
 import datetime
-
+import seaborn
+import statsmodels
+from statsmodels.tsa.stattools import coint
+import matplotlib.pyplot as plt
 #variables
 front_expiry = '2018,09,27'
 back_expiry = '2018,10,25'
 start_day = '2018,08,01'
 end_day = '2018,08,31'
 ticker = 'PNB'
-location = "/Users/abhishek.chaturvedi/Documents/Work/Projects/test/data/"
+timestr = time.strftime("%Y%m%d")
+filename = 'data_%s.csv' % timestr
+#location = "/Users/abhishek.chaturvedi/Documents/Work/Projects/test/data/"
+location= "e:\\Python2.7\\projects\\test\\data\\"
 
-banknifty = ['AXISBANK','BANKBARODA','FEDERALBANK','HDFCBANK','ICICIBANK','IDFCBANK','INDUSINDBK','KOTAKBANK',
+banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK','IDFCBANK','INDUSINDBK','KOTAKBANK',
 			 'PNB','RBLBANK','SBIN','YESBANK']
+basket = ['PNB','SBIN','YESBANK']
 nifty50 = ['ACC.NS','ADANIPORTS.NS','AMBUJACEM.NS','ASIANPAINT.NS','AXISBANK.NS','BAJAJ-AUTO.NS','BANKBARODA.NS',
 'BHEL.NS','BPCL.NS','BHARTIARTL.NS','BOSCHLTD.NS','AUROPHARMA.NS','CIPLA.NS','COALINDIA.NS','DRREDDY.NS','GAIL.NS','GRASIM.NS',
 'HCLTECH.NS','HDFCBANK.NS','HEROMOTOCO.NS','HINDALCO.NS','HINDUNILVR.NS','HDFC.NS','ITC.NS','ICICIBANK.NS','IDEA.NS','INDUSINDBK.NS','INFY.NS',
 'KOTAKBANK.NS','LT.NS','LUPIN.NS','M&M.NS','MARUIT.NS','NTPC.NS','ONGC.NS','POWERGRID.NS','INFRATEL.NS','RELIANCE.NS','SBIN.NS',
 'SUNPHARMA.NS','TCS.NS','TATAMOTORS.NS','TATAPOWER.NS','TATASTEEL.NS','TECHM.NS','ULTRATECH.NS','EICHERMOT.NS','WIPRO.NS','YESBANK.NS',
 'ZEEL.NS','TATAMTRDVR.NS']
+
 def convert_date(stringO):
 
 	convertedDate = datetime.strptime(stringO, "%Y,%m,%d").date()
@@ -54,16 +66,74 @@ def get_futures_data(ticker,start_day,end_day,expiry):
 	print "Getting data for %s : %s" %(ticker,expiry)
 	return df
 
-def pullData(stockY=None,stockX=None, delta=None, future=False, nifty=False, bnifty=False,sTime=None, eTime=None):
+def create_file_from_df(fName,df):
 
-	if not future:
+	try:
+		df.to_csv(location + '%s' % fName)
+		
+	except Exception,e:
+		print e
+	
+	print 'Created file : %s' % fName
+	return None
+
+	
+def find_cointegrated_pairs(data):
+    n = data.shape[1]
+    score_matrix = np.zeros((n, n))
+    pvalue_matrix = np.ones((n, n))
+    keys = data.keys()
+    pairs = []
+    for i in range(n):
+        for j in range(i+1, n):
+            S1 = data[keys[i]]
+            S2 = data[keys[j]]
+            result = coint(S1, S2)
+            score = result[0]
+            pvalue = result[1]
+            score_matrix[i, j] = score
+            pvalue_matrix[i, j] = pvalue
+            if pvalue < 0.02:
+                pairs.append((keys[i], keys[j]))
+    return score_matrix, pvalue_matrix, pairs
+
+def pullData(stockY=None,stockX=None, future=False, nifty=False, bnifty=False,sTime=None, eTime=None,basket=basket):
+
+	merge = pd.DataFrame(columns=['Date'])
+	first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime)
+	
+	for i in range(1,len(basket)):
+		dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime)
+
+		if i == 1:
+			data = pd.concat([first_stock['Close'].rename(basket[0]),
+							   dfstock['Close'].rename(basket[i])], 
+						       axis=1)
+		else:
+			data = pd.concat([data, dfstock['Close'].rename(basket[i])], 
+						       axis=1)
+	
+	#Set Date as index
+	#data.set_index('Date', inplace=True)
+	data.replace([np.inf,-np.inf], np.nan).dropna()
+	data.sort_values(by=['Date'],ascending=False)
+	create_file_from_df(fName=filename,df=data)
+	
+	return data
+	
+	
+	
+	if False:
 		df_stockY = nsepy.get_history(symbol=stockY, start=sTime,end=eTime)
 		df_stockX = nsepy.get_history(symbol=stockX, start=sTime,end=eTime)
-
-		merge = pd.concat([df_stockY[['Open','Close']], df_stockX[['Open','Close']]], axis=1)
-		print 'Creating merged CSV files for stocks %s & %s' % ( stockY, stockX)
-		merge.to_csv(location + "merge_%s_%s.csv" % (stockY, stockX))
-	else:
+		
+		
+		merge = pd.concat([df_stockY['Close'].rename(stockY),df_stockX['Close'].rename(stockX)], axis=1)
+		print merge.head()
+		#merge = pd.concat([df_stockY[['Open','Close']], df_stockX[['Open','Close']]], axis=1)
+		#print 'Creating merged CSV files for stocks %s & %s' % ( stockY, stockX)
+		#merge.to_csv(location + "merge_%s_%s.csv" % (stockY, stockX))
+	if False:
 
 		front_month = nsepy.get_futures_data(ticker, start_day, end_day, front_expiry)
 		back_month =  nsepy.get_futures_data(ticker, start_day, end_day, back_expiry)
@@ -89,7 +159,7 @@ def main():
 	t_delta = datetime.timedelta(days=int(args['delta']))
 	sTime = eTime - t_delta
 
-	print('Fetching Last %s days of data for stocks: %s & %s' % (args['delta'], args['stockY'], args['stockX']))
+	print('Fetching Last %s days of data' % (args['delta']))
 
 	if args['stockY']:
 		if not args['future']:
@@ -99,8 +169,32 @@ def main():
 		else:
 			print 'Fetching futures data for stock: %s' % (args['stockY'])
 
-	pullData(stockY=args['stockY'],stockX=args['stockX'],delta=args['delta'],
-			 future=args['future'], nifty=args['nifty'], bnifty=args['bnifty'],sTime=sTime,eTime=eTime)
+	if os.path.isfile(location+filename):
+		print 'Data already downloaded'
+		try:
+			data = pd.read_csv(location+filename)
+			#Set Date as index
+			data.set_index('Date', inplace=True)
+			data.sort_values(by=['Date'],ascending=False)
+		except Exception, e:
+			print e
+	else:
+		data = pullData(stockY=args['stockY'],stockX=args['stockX'],
+			 future=args['future'], nifty=args['nifty'], bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
+			 basket=banknifty)
+		
+		
+	# Heatmap to show the p-values of the cointegration test
+	# between each pair of stocks
+	scores, pvalues, pairs = find_cointegrated_pairs(data)
 
+	m = [0,0.2,0.4,0.6,0.8,1]
+	seaborn.heatmap(pvalues, xticklabels=banknifty, yticklabels=banknifty,
+		cmap='RdYlGn_r',
+		mask = (pvalues >= 0.98))
+	plt.show()
+	print 'Possible trade in the followig pairs:\n',pairs
+	
+			 
 if __name__ == '__main__':
 	main()
