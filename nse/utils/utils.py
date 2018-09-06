@@ -8,6 +8,12 @@ import sys
 import re
 import datetime
 import calendar
+import numpy as np
+from statsmodels import regression
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import math
+import pandas as pd
 
 
 # utility class implementing the helper funtions for nsequoter

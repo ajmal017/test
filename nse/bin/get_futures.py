@@ -3,6 +3,7 @@
 #Abhishek v1.0
 # Date : Aug/31/2018
 # To get NIFTY individual stocks futures converted to dataframes
+
 import nsepy
 from datetime import date, datetime
 import time,os
@@ -11,29 +12,35 @@ import pandas as pd
 import argparse
 import datetime
 import seaborn
-import statsmodels
-from statsmodels.tsa.stattools import coint
+#import statsmodels
+#from statsmodels.tsa.stattools import coint
 import matplotlib.pyplot as plt
+#plt.interactive(True)
+import pairTrader
+
 #variables
+pfilter = 0.05
 front_expiry = '2018,09,27'
 back_expiry = '2018,10,25'
 start_day = '2018,08,01'
 end_day = '2018,08,31'
-ticker = 'PNB'
-timestr = time.strftime("%Y%m%d")
-filename = 'data_%s.csv' % timestr
-#location = "/Users/abhishek.chaturvedi/Documents/Work/Projects/test/data/"
-location= "e:\\Python2.7\\projects\\test\\data\\"
 
-banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK','IDFCBANK','INDUSINDBK','KOTAKBANK',
+timestr = time.strftime("%Y%m%d")
+location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
+#location= "e:\\Python2.7\\projects\\test\\data\\"
+
+banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
+			 'IDFCBANK','INDUSINDBK','KOTAKBANK',
 			 'PNB','RBLBANK','SBIN','YESBANK']
-basket = ['PNB','SBIN','YESBANK']
-nifty50 = ['ACC.NS','ADANIPORTS.NS','AMBUJACEM.NS','ASIANPAINT.NS','AXISBANK.NS','BAJAJ-AUTO.NS','BANKBARODA.NS',
-'BHEL.NS','BPCL.NS','BHARTIARTL.NS','BOSCHLTD.NS','AUROPHARMA.NS','CIPLA.NS','COALINDIA.NS','DRREDDY.NS','GAIL.NS','GRASIM.NS',
-'HCLTECH.NS','HDFCBANK.NS','HEROMOTOCO.NS','HINDALCO.NS','HINDUNILVR.NS','HDFC.NS','ITC.NS','ICICIBANK.NS','IDEA.NS','INDUSINDBK.NS','INFY.NS',
-'KOTAKBANK.NS','LT.NS','LUPIN.NS','M&M.NS','MARUIT.NS','NTPC.NS','ONGC.NS','POWERGRID.NS','INFRATEL.NS','RELIANCE.NS','SBIN.NS',
-'SUNPHARMA.NS','TCS.NS','TATAMOTORS.NS','TATAPOWER.NS','TATASTEEL.NS','TECHM.NS','ULTRATECH.NS','EICHERMOT.NS','WIPRO.NS','YESBANK.NS',
-'ZEEL.NS','TATAMTRDVR.NS']
+nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
+'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
+'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
+'KOTAKBANK','LT','LUPIN','M&M','MARUIT','NTPC','ONGC','POWERGRID','INFRATEL','RELIANCE','SBIN',
+'SUNPHARMA','TCS','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM','ULTRATECH','EICHERMOT','WIPRO','YESBANK',
+'ZEEL','TATAMTRDVR']
+usfutures = ['esu18','clv18','gcz18','nqu18']
+
+
 
 def convert_date(stringO):
 
@@ -66,92 +73,17 @@ def get_futures_data(ticker,start_day,end_day,expiry):
 	print "Getting data for %s : %s" %(ticker,expiry)
 	return df
 
-def create_file_from_df(fName,df):
-
-	try:
-		df.to_csv(location + '%s' % fName)
-		
-	except Exception,e:
-		print e
-	
-	print 'Created file : %s' % fName
-	return None
-
-	
-def find_cointegrated_pairs(data):
-    n = data.shape[1]
-    score_matrix = np.zeros((n, n))
-    pvalue_matrix = np.ones((n, n))
-    keys = data.keys()
-    pairs = []
-    for i in range(n):
-        for j in range(i+1, n):
-            S1 = data[keys[i]]
-            S2 = data[keys[j]]
-            result = coint(S1, S2)
-            score = result[0]
-            pvalue = result[1]
-            score_matrix[i, j] = score
-            pvalue_matrix[i, j] = pvalue
-            if pvalue < 0.02:
-                pairs.append((keys[i], keys[j]))
-    return score_matrix, pvalue_matrix, pairs
-
-def pullData(stockY=None,stockX=None, future=False, nifty=False, bnifty=False,sTime=None, eTime=None,basket=basket):
-
-	merge = pd.DataFrame(columns=['Date'])
-	first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime)
-	
-	for i in range(1,len(basket)):
-		dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime)
-
-		if i == 1:
-			data = pd.concat([first_stock['Close'].rename(basket[0]),
-							   dfstock['Close'].rename(basket[i])], 
-						       axis=1)
-		else:
-			data = pd.concat([data, dfstock['Close'].rename(basket[i])], 
-						       axis=1)
-	
-	#Set Date as index
-	#data.set_index('Date', inplace=True)
-	data.replace([np.inf,-np.inf], np.nan).dropna()
-	data.sort_values(by=['Date'],ascending=False)
-	create_file_from_df(fName=filename,df=data)
-	
-	return data
-	
-	
-	
-	if False:
-		df_stockY = nsepy.get_history(symbol=stockY, start=sTime,end=eTime)
-		df_stockX = nsepy.get_history(symbol=stockX, start=sTime,end=eTime)
-		
-		
-		merge = pd.concat([df_stockY['Close'].rename(stockY),df_stockX['Close'].rename(stockX)], axis=1)
-		print merge.head()
-		#merge = pd.concat([df_stockY[['Open','Close']], df_stockX[['Open','Close']]], axis=1)
-		#print 'Creating merged CSV files for stocks %s & %s' % ( stockY, stockX)
-		#merge.to_csv(location + "merge_%s_%s.csv" % (stockY, stockX))
-	if False:
-
-		front_month = nsepy.get_futures_data(ticker, start_day, end_day, front_expiry)
-		back_month =  nsepy.get_futures_data(ticker, start_day, end_day, back_expiry)
-		columns = ['fO','fC','bO','bC']
-		merge = pd.concat([front_month[['Open','Close']],back_month[['Open','Close']]],axis=1)
-
-	#Create the merged CSV file
-	#merge.to_csv(location+"merge_%s.csv" % ticker)
-
 
 def main():
 	parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
-	parser.add_argument('-s1', '--stockY', help='NSE first stock symbol', required=True)
-	parser.add_argument('-s2', '--stockX', help='NSE second stock symbol', required=True)
-	parser.add_argument('-d', '--delta', help='Start date', required=True)
+	parser.add_argument('-s1', '--stockY', help='NSE first stock symbol', required=False)
+	parser.add_argument('-s2', '--stockX', help='NSE second stock symbol', required=False)
+	parser.add_argument('-d', '--delta', help='Start date', required=False, default=200)
 	parser.add_argument('-f', '--future', help='Flag for stock futures', required=False, action='store_true', default=False)
 	parser.add_argument('-I', '--nifty', help='Flag for NIFTY index', required=False, action='store_true', default=False)
 	parser.add_argument('-B', '--bnifty', help='Flag for BANK NIFTY index', required=False, action='store_true', default=False)
+	parser.add_argument('-U', '--US', help='Flag for US Futures', required=False, action='store_true',
+						default=False)
 	args = vars(parser.parse_args())
 
 	# Initialize
@@ -169,32 +101,72 @@ def main():
 		else:
 			print 'Fetching futures data for stock: %s' % (args['stockY'])
 
-	if os.path.isfile(location+filename):
+	##Check if NIFTY or BANKNIFTY or US Futures has been specified
+	if args['nifty']:
+		name = 'nifty'
+		basket = nifty50
+	if args['bnifty']:
+		name = 'banknifty'
+		basket = banknifty
+	if args['US']:
+		name = 'USFutures'
+		basket = usfutures
+
+	filename = '%s_%s.csv' % (name,timestr)
+	name  = location+filename
+	if os.path.isfile(name):
 		print 'Data already downloaded'
 		try:
-			data = pd.read_csv(location+filename)
+			data = pd.read_csv(name)
 			#Set Date as index
 			data.set_index('Date', inplace=True)
 			data.sort_values(by=['Date'],ascending=False)
 		except Exception, e:
 			print e
 	else:
-		data = pullData(stockY=args['stockY'],stockX=args['stockX'],
-			 future=args['future'], nifty=args['nifty'], bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
-			 basket=banknifty)
-		
-		
+		if args['nifty'] or args['bnifty']:
+			data = pairTrader.pullData(stockY=args['stockY'],stockX=args['stockX'],
+				 						future=args['future'], nifty=args['nifty'],
+									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
+			 							basket=basket, filename=filename)
+		else:
+			data = pairTrader.usfutures(basket=usfutures, filename=filename)
+
+
 	# Heatmap to show the p-values of the cointegration test
 	# between each pair of stocks
-	scores, pvalues, pairs = find_cointegrated_pairs(data)
+	scores, pvalues, pairs = pairTrader.find_cointegrated_pairs(data, pfilter)
+	print '\nPossible pair trade in the followig pairs:\n',pairs
+	print 'Confidence Threshold: %s' %pfilter
 
+	pairTrader.find_linear_regression_pairs(data, filename)
+	pairTrader.find_linear_regression_pairs_qualified(data, pairs, filename)
+
+	"""
+	Seaborn Heatmap plot for pairs in the basket
 	m = [0,0.2,0.4,0.6,0.8,1]
 	seaborn.heatmap(pvalues, xticklabels=banknifty, yticklabels=banknifty,
 		cmap='RdYlGn_r',
-		mask = (pvalues >= 0.98))
+		mask = (pvalues >= (1.0 - pfilter)))
+	#plt.show()
+	"""
+
+	"""
+	S1 = data['IDFCBANK']
+	S2 = data['KOTAKBANK']
+	score, pvalue, _ = coint(S1, S2)
+	print('PValue = ',pvalue)
+	ratios = S1 / S2
+	ratios.plot()
+	plt.axhline(ratios.mean())
+	plt.legend([' Ratio'])
 	plt.show()
-	print 'Possible trade in the followig pairs:\n',pairs
-	
-			 
+	zscore(ratios).plot()
+	plt.axhline(zscore(ratios).mean())
+	plt.axhline(1.0, color='red')
+	plt.axhline(-1.0, color='green')
+	plt.show()
+	"""
+
 if __name__ == '__main__':
 	main()
