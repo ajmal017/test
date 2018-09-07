@@ -12,10 +12,7 @@ import pandas as pd
 import argparse
 import datetime
 import seaborn
-#import statsmodels
-#from statsmodels.tsa.stattools import coint
 import matplotlib.pyplot as plt
-#plt.interactive(True)
 import pairTrader
 
 #variables
@@ -39,6 +36,12 @@ nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','
 'SUNPHARMA','TCS','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM','ULTRATECH','EICHERMOT','WIPRO','YESBANK',
 'ZEEL','TATAMTRDVR']
 usfutures = ['esu18','clv18','gcz18','nqu18']
+grains = ['ZC','ZS','ZW','ZL','ZM','ZO','XK','XW','XC']
+METALS = ['GC','HG','SI','PL','PA','MGC','YG','YI']
+#ENERGY = ['BRN','NG','CL','HO','RB','QM','WBS','BZ','QG']
+ENERGY = ['cbx18','clv18','clx18']
+INDICES = ['ES','NQ','YM','TF','NKD','RTY']
+
 
 
 
@@ -91,7 +94,7 @@ def main():
 	t_delta = datetime.timedelta(days=int(args['delta']))
 	sTime = eTime - t_delta
 
-	print('Fetching Last %s days of data' % (args['delta']))
+	#print('Fetching Last %s days of data' % (args['delta']))
 
 	if args['stockY']:
 		if not args['future']:
@@ -109,8 +112,8 @@ def main():
 		name = 'banknifty'
 		basket = banknifty
 	if args['US']:
-		name = 'USFutures'
-		basket = usfutures
+		name = 'ENERGY'
+		basket = ENERGY
 
 	filename = '%s_%s.csv' % (name,timestr)
 	name  = location+filename
@@ -130,27 +133,30 @@ def main():
 									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
 			 							basket=basket, filename=filename)
 		else:
-			data = pairTrader.usfutures(basket=usfutures, filename=filename)
+			data = pairTrader.usfutures(basket=basket, filename=filename)
 
 
 	# Heatmap to show the p-values of the cointegration test
 	# between each pair of stocks
 	scores, pvalues, pairs = pairTrader.find_cointegrated_pairs(data, pfilter)
-	print '\nPossible pair trade in the followig pairs:\n',pairs
-	print 'Confidence Threshold: %s' %pfilter
+	if pairs:
+		print '\nPossible pair trade in the followig pairs:\n',pairs
+		print 'Confidence Threshold: %s' % pfilter
+		print 'Will be checking for qualifying pairs'
 
-	pairTrader.find_linear_regression_pairs(data, filename)
-	pairTrader.find_linear_regression_pairs_qualified(data, pairs, filename)
+	else:
+		print '\nNo possible pair trades found in basket : %s as pvalue of all pairs is more than %s' %(basket, pfilter)
 
-	"""
-	Seaborn Heatmap plot for pairs in the basket
+	name = pairTrader.LRegression_allPairs(data, filename)
+	pairTrader.LRegression_qualifiedPairs1(data, name)
+
+	""""#Seaborn Heatmap plot for pairs in the basket
 	m = [0,0.2,0.4,0.6,0.8,1]
-	seaborn.heatmap(pvalues, xticklabels=banknifty, yticklabels=banknifty,
+	seaborn.heatmap(pvalues, xticklabels=basket, yticklabels=basket,
 		cmap='RdYlGn_r',
 		mask = (pvalues >= (1.0 - pfilter)))
-	#plt.show()
+	plt.show()
 	"""
-
 	"""
 	S1 = data['IDFCBANK']
 	S2 = data['KOTAKBANK']

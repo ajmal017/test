@@ -34,9 +34,9 @@ def create_file_from_df(fName, df):
 def usfutures(basket, filename):
 
     timestr = time.strftime("%m-%d-%Y")
-    columns = ['Time','Open','High','Low','Close','Change','Volume','Open Interest']
+    columns = ['Time','Open','High','Low','Last','Change','Volume','Open Interest']
     for k,v in enumerate(basket):
-        name = location + v + '_price-history-%s.csv' % timestr
+        name = location + v.lower() + '_price-history-%s.csv' % timestr
         if not os.path.isfile(name):
             print 'File %s not present. Please download.' % name
             exit(0)
@@ -47,11 +47,11 @@ def usfutures(basket, filename):
         _ = location + basket[i] + '_price-history-%s.csv' % timestr
         dfstock = pd.read_csv(_, names=columns, skiprows=1)
         if i == 1:
-            data = pd.concat([first_stock['Close'].rename(basket[0]),
-                              dfstock['Close'].rename(basket[i])],
+            data = pd.concat([first_stock['Last'].rename(basket[0]),
+                              dfstock['Last'].rename(basket[i])],
                              axis=1)
         else:
-            data = pd.concat([data, dfstock['Close'].rename(basket[i])],
+            data = pd.concat([data, dfstock['Last'].rename(basket[i])],
                              axis=1)
 
     data.replace([np.inf, -np.inf], np.nan).dropna()
@@ -59,6 +59,8 @@ def usfutures(basket, filename):
     create_file_from_df(fName=filename, df=data)
 
     return data
+
+
 
 
 def pullData(stockY=None, stockX=None, future=False, nifty=False, bnifty=False, sTime=None, eTime=None, basket=None
@@ -121,9 +123,9 @@ def get_alpha(model):
 def get_beta(model):
     return model.params[1]
 def get_pvalue(model):
-    return model.f_pvalue
+    return '%.2f' % model.f_pvalue
 def get_current_std_err(model):
-    return model.resid[-1] / get_std_err(model)
+    return '%.2f' %(model.resid[-1] / get_std_err(model))
 
 def print_model_info(model):
     print model.summary()
@@ -142,6 +144,7 @@ def find_cointegrated_pairs(data, pfilter):
     pvalue_matrix = np.ones((n, n))
     keys = data.keys()
     pairs = []
+
     for i in range(n):
         for j in range(i+1, n):
             S1 = data[keys[i]]
@@ -152,7 +155,9 @@ def find_cointegrated_pairs(data, pfilter):
             score_matrix[i, j] = score
             pvalue_matrix[i, j] = pvalue
             if pvalue < pfilter:
+                print 'pvalue',pvalue
                 pairs.append((keys[i], keys[j]))
+    #return_list = [score_matrix, pvalue_matrix, pairs]
     return score_matrix, pvalue_matrix, pairs
 
 def set_values(model, Y, X):
@@ -181,7 +186,7 @@ def set_values(model, Y, X):
 
     return rows_list
 
-def find_linear_regression_pairs(data, filename):
+def LRegression_allPairs(data, filename):
     """
     input: dataframe containing a basket of stock closing prices
     :return Nothing, just create the file
@@ -209,12 +214,12 @@ def find_linear_regression_pairs(data, filename):
                 #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
                 running_df.loc[len(running_df)] = set_values(inverse_model, Y=keys[j], X=keys[i])
 
-    name = location+'pairtrade_'+filename
+    name = location+'allPairs_'+filename
     running_df.to_csv(name)
     print 'Created pair trader file: %s' % (name)
-    return None
+    return name
 
-def find_linear_regression_pairs_qualified(data, pairs, filename):
+def LRegression_qualifiedPairs(data, pairs, filename):
     """
     Perform linear regression on only the selected pairs after COINT
     Store the OLS model results in a csv file
@@ -225,7 +230,7 @@ def find_linear_regression_pairs_qualified(data, pairs, filename):
 
     header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
     qualified_df = pd.DataFrame(columns=header)
-
+    sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
     keys = data.keys()
     for k,v in pairs:
         Y = np.asarray(data[k])
@@ -234,13 +239,28 @@ def find_linear_regression_pairs_qualified(data, pairs, filename):
         inverse_model = linreg(Y=X, X=Y)
 
         if get_std_err_ratio(model) < get_std_err_ratio(inverse_model):
+            ## Condition for checking which stock will be Y and which will be X
+            ## Then choose the type of trade depending upon the current std_err value
             #print '\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j])
-            if abs(get_current_std_err(model)) > 2.0:
+            if get_current_std_err(model) <= sd_matrix[1]:
                 qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
+                print 'Buy : %s Sell %s' % (k,v)
+            if get_current_std_err(model) >= sd_matrix[4]:
+                qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
+                print 'Sell : %s Buy %s' % (k,v)
+
         else:
             #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
-            if abs(get_current_std_err(model)) > 2.0:
+            if get_current_std_err(inverse_model) <= sd_matrix[1]:
                 qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=v, X=k)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (v,k)
+                print 'Buy : %s Sell %s' % (v,k)
+            if get_current_std_err(inverse_model) >= sd_matrix[4]:
+                qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (v, k)
+                print 'Buy : %s Sell %s' % (v, k)
 
     name = location+'qualified_'+filename
     if not qualified_df.empty:
@@ -248,4 +268,101 @@ def find_linear_regression_pairs_qualified(data, pairs, filename):
         print 'Created qualified pair trader file: %s' % (name)
     else:
         print 'No qualified pairs identified.'
+    return None
+
+def LRegression_qualifiedPairs1(data, filename):
+    """
+    Perform linear regression on only the selected pairs after COINT
+    Store the OLS model results in a csv file
+    Selection Criteria:
+        1. Compare the STD_ERRROR Ratio of Intercept / Std. Err of residuals and select the YStock which has this ratio minimum
+        2. Filter for only those Y:X stock pairs which have the std_err (variance of current residuals) above or below the 1SD/2SD
+    """
+
+    columns = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
+    qualified_df = pd.DataFrame(columns=columns)
+    sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
+    keys = data.keys()
+    n = data.shape[1]
+    try:
+        data = pd.read_csv(filename,skiprows=1,names=columns)
+    except Exception,e:
+        print 'Unable to read file: %s' % filename
+        print e
+    pvalue_boolean = data.PValue < 0.02
+    data = data[pvalue_boolean]
+    less2SD = data['Current_STD_Error'] <= -2.0
+    greater2SD = data['Current_STD_Error'] >= 2.0
+    less3SD = data['Current_STD_Error'] <= -3.0
+    greater3SD = data['Current_STD_Error'] >= 3.0
+
+    frame_over2SD = data[greater2SD]
+    frame_less2SD = data[less2SD]
+    frame_over3SD = data[greater3SD]
+    frame_less3SD = data[less3SD]
+
+    filename = filename.split('.csv')[0]
+
+    name = filename + '_qualified_over2SD.csv'
+    if not frame_over2SD.empty:
+        frame_over2SD.to_csv(name)
+        print frame_over2SD
+        print 'Created qualified pair trader file: %s' % (name)
+    name = filename + '_qualified_less2SD.csv'
+    if not frame_less2SD.empty:
+        frame_less2SD.to_csv(name)
+        print frame_less2SD
+        print 'Created qualified pair trader file: %s' % name
+    name = filename + '_qualified_over3SD.csv'
+    if not frame_over3SD.empty:
+        frame_over3SD.to_csv(name)
+        print frame_over3SD
+        print 'Created qualified pair trader file: %s' % name
+    name = filename + '_qualified_less3SD.csv'
+    if not frame_less3SD.empty:
+        frame_less3SD.to_csv(name)
+        print frame_less3SD
+        print 'Created qualified pair trader file: %s' % name
+
+    #print data[pvalue_boolean & std_err_boolean]
+    """
+    for i in range(n):
+        for j in range(i+1,n):
+            Y = np.asarray(data[keys[i]])
+            X = np.asarray(data[keys[j]])
+            model = linreg(Y=Y, X=X)
+            inverse_model = linreg(Y=X, X=Y)
+
+        if get_std_err_ratio(model) < get_std_err_ratio(inverse_model):
+            ## Condition for checking which stock will be Y and which will be X
+            ## Then choose the type of trade depending upon the current std_err value
+            #print '\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j])
+            if get_current_std_err(model) <= sd_matrix[1]:
+                qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
+                print 'Buy : %s Sell %s' % (k,v)
+            if get_current_std_err(model) >= sd_matrix[4]:
+                qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
+                print 'Sell : %s Buy %s' % (k,v)
+
+        else:
+            #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
+            if get_current_std_err(inverse_model) <= sd_matrix[1]:
+                qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=v, X=k)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (v,k)
+                print 'Buy : %s Sell %s' % (v,k)
+            if get_current_std_err(inverse_model) >= sd_matrix[4]:
+                qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=k, X=v)
+                print 'Qualified Trade: YStock = %s and XStock = %s' % (v, k)
+                print 'Buy : %s Sell %s' % (v, k)
+
+    name = location+'qualified_'+filename
+    if not qualified_df.empty:
+        qualified_df.to_csv(name)
+        print 'Created qualified pair trader file: %s' % (name)
+    else:
+        print 'No qualified pairs identified.'
+    return None
+    """
     return None
