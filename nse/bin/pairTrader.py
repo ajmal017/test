@@ -8,14 +8,17 @@ import pandas as pd
 from statsmodels.tsa.stattools import coint
 import nsepy
 import os, sys
+from get_futures import constants
 
 ##Reference:
 ## https://stackoverflow.com/questions/32101233/appending-predicted-values-and-residuals-to-pandas-dataframe
 ## Quantopian Lecture: https://www.quantopian.com/posts/quantopian-lecture-series-linear-regression
-timestr = time.strftime("%Y%m%d")
+#location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
+#directory_name = location+timestr+'/'
 
-location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
-
+location = constants.location
+timestr = constants.timestr
+directory_name = constants.directory_name
 
 def zscore(series):
     return (series - series.mean()) / np.std(series)
@@ -23,7 +26,7 @@ def zscore(series):
 
 def create_file_from_df(fName, df):
     try:
-        df.to_csv(location + '%s' % fName)
+        df.to_csv('%s' % fName)
 
     except Exception, e:
         print e
@@ -33,19 +36,22 @@ def create_file_from_df(fName, df):
 
 def usfutures(basket, filename):
 
+    comment = 'D'
     timestr = time.strftime("%m-%d-%Y")
     columns = ['Time','Open','High','Low','Last','Change','Volume','Open Interest']
     for k,v in enumerate(basket):
-        name = location + v.lower() + '_price-history-%s.csv' % timestr
+        name = directory_name + v.lower() + '_price-history-%s.csv' % timestr
         if not os.path.isfile(name):
             print 'File %s not present. Please download.' % name
             exit(0)
 
-    name = location + basket[0] + '_price-history-%s.csv' % timestr
-    first_stock = pd.read_csv(name, names=columns, skiprows=1)
+    name = directory_name + basket[0] + '_price-history-%s.csv' % timestr
+    first_stock = pd.read_csv(name, names=columns, skiprows=1,comment=comment)
+    print 'Read successful: %s' % name
     for i in range(1,len(basket)):
-        _ = location + basket[i] + '_price-history-%s.csv' % timestr
-        dfstock = pd.read_csv(_, names=columns, skiprows=1)
+        _ = directory_name + basket[i].lower() + '_price-history-%s.csv' % timestr
+        dfstock = pd.read_csv(_, names=columns, skiprows=1,comment=comment)
+        print 'Read successful: %s' % _
         if i == 1:
             data = pd.concat([first_stock['Last'].rename(basket[0]),
                               dfstock['Last'].rename(basket[i])],
@@ -112,16 +118,16 @@ def linreg(Y, X):
     return model
 
 def get_std_err_intercept(model):
-    return model.bse[0]
+    return  model.bse[0]
 def get_std_err(model):
     return model.resid.std()
 def get_std_err_ratio(model):
     ##Choose the least std error ratio
     return get_std_err_intercept(model) / get_std_err(model)
 def get_alpha(model):
-    return model.params[0]
+    return '%.2f' % model.params[0]
 def get_beta(model):
-    return model.params[1]
+    return '%.2f' %model.params[1]
 def get_pvalue(model):
     return '%.2f' % model.f_pvalue
 def get_current_std_err(model):
@@ -169,7 +175,7 @@ def set_values(model, Y, X):
     rows_list.append(X)
     rows_list.append(get_pvalue(model))
     rows_list.append(get_beta(model))
-    rows_list.append(get_std_err_ratio(model))
+    rows_list.append('%.2f' % get_std_err_ratio(model))
     rows_list.append(get_alpha(model))
     rows_list.append(get_current_std_err(model))
 
@@ -196,6 +202,7 @@ def LRegression_allPairs(data, filename):
     header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
     running_df = pd.DataFrame(columns=header)
     qualified_df = pd.DataFrame(columns=header)
+    data = data.dropna()
     n = data.shape[1]
 
     keys = data.keys()
@@ -214,9 +221,9 @@ def LRegression_allPairs(data, filename):
                 #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
                 running_df.loc[len(running_df)] = set_values(inverse_model, Y=keys[j], X=keys[i])
 
-    name = location+'allPairs_'+filename
+    name = directory_name+'allPairs_'+filename
     running_df.to_csv(name)
-    print 'Created pair trader file: %s' % (name)
+    print 'Created All Pairs trader file: %s' % (name)
     return name
 
 def LRegression_qualifiedPairs(data, pairs, filename):
@@ -231,6 +238,7 @@ def LRegression_qualifiedPairs(data, pairs, filename):
     header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
     qualified_df = pd.DataFrame(columns=header)
     sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
+    data = data.dropna
     keys = data.keys()
     for k,v in pairs:
         Y = np.asarray(data[k])
@@ -262,7 +270,7 @@ def LRegression_qualifiedPairs(data, pairs, filename):
                 print 'Qualified Trade: YStock = %s and XStock = %s' % (v, k)
                 print 'Buy : %s Sell %s' % (v, k)
 
-    name = location+'qualified_'+filename
+    name = directory_name+'qualified_'+filename
     if not qualified_df.empty:
         qualified_df.to_csv(name)
         print 'Created qualified pair trader file: %s' % (name)

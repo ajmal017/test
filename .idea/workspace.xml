@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="446655f6-6357-49ac-bac6-fab4422c23b6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/test.iml" afterPath="$PROJECT_DIR$/.idea/test.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/data/Stocks Violin Plot - Increasing Standard Deviation.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/data/Thumbs.db" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/data/Thumbs.db:encryptable" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/data/.~lock.allPairs_banknifty_20180906.csv#" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/data/.~lock.pairtrade_banknifty_20180906.csv#" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/data/allPairs_ENERGY_20180906.csv" afterPath="$PROJECT_DIR$/data/allPairs_ENERGY_20180906.csv" />
+      <change beforePath="$PROJECT_DIR$/data/pairtrade_banknifty_20180906.csv" afterPath="$PROJECT_DIR$/data/pairtrade_banknifty_20180906.csv" />
       <change beforePath="$PROJECT_DIR$/nse/bin/get_futures.py" afterPath="$PROJECT_DIR$/nse/bin/get_futures.py" />
       <change beforePath="$PROJECT_DIR$/nse/bin/pairTrader.py" afterPath="$PROJECT_DIR$/nse/bin/pairTrader.py" />
     </list>
@@ -38,180 +37,40 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="nse4.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/nse4.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="687">
-              <caret line="112" column="8" lean-forward="false" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="29" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-                <element signature="e#516#1046#0" expanded="false" />
-                <element signature="e#1135#1682#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="get_futures.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="get_futures.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/nse/bin/get_futures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="452">
-              <caret line="143" column="50" lean-forward="true" selection-start-line="143" selection-start-column="50" selection-end-line="143" selection-end-column="50" />
+            <state relative-caret-position="309">
+              <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
               <folding>
                 <element signature="n#!!doc" expanded="false" />
                 <element signature="e#148#160#0" expanded="true" />
-                <element signature="e#653#780#0" expanded="false" />
-                <element signature="e#791#1305#0" expanded="false" />
-                <element signature="e#1631#1715#0" expanded="false" />
-                <element signature="e#1780#1897#0" expanded="false" />
-                <element signature="e#1956#2486#0" expanded="false" />
-                <element signature="e#1980#2195#0" expanded="false" />
-                <element signature="e#2206#2423#0" expanded="false" />
-                <element signature="e#3567#3741#0" expanded="false" />
-                <element signature="e#3593#3667#0" expanded="false" />
-                <element signature="e#3620#3667#0" expanded="false" />
-                <element signature="e#3828#3861#0" expanded="false" />
-                <element signature="e#3884#3923#0" expanded="false" />
-                <element signature="e#5206#5423#1" expanded="false" />
-                <element signature="e#5425#5774#1" expanded="false" />
+                <element signature="e#745#874#0" expanded="false" />
+                <element signature="e#886#1405#0" expanded="false" />
+                <element signature="e#1780#1864#0" expanded="false" />
+                <element signature="e#1929#2046#0" expanded="false" />
+                <element signature="e#2105#2635#0" expanded="false" />
+                <element signature="e#2129#2344#0" expanded="false" />
+                <element signature="e#2355#2572#0" expanded="false" />
+                <element signature="e#3716#3890#0" expanded="false" />
+                <element signature="e#3742#3816#0" expanded="false" />
+                <element signature="e#3769#3816#0" expanded="false" />
+                <element signature="e#3977#4010#0" expanded="false" />
+                <element signature="e#4033#4072#0" expanded="false" />
+                <element signature="e#5781#5998#1" expanded="false" />
+                <element signature="e#6000#6349#1" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pairTrader.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="pairTrader.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/nse/bin/pairTrader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="598">
-              <caret line="323" column="27" lean-forward="false" selection-start-line="323" selection-start-column="27" selection-end-line="323" selection-end-column="27" />
+            <state relative-caret-position="672">
+              <caret line="67" column="0" lean-forward="false" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2907">
-              <caret line="13" column="20" lean-forward="false" selection-start-line="13" selection-start-column="20" selection-end-line="13" selection-end-column="20" />
-              <folding>
-                <element signature="e#595#778#0" expanded="false" />
-                <element signature="e#595#755#1" expanded="false" />
-                <element signature="e#832#1202#0" expanded="false" />
-                <element signature="e#832#1035#1" expanded="false" />
-                <element signature="e#1255#1625#0" expanded="false" />
-                <element signature="e#1255#1456#1" expanded="false" />
-                <element signature="e#1644#1727#0" expanded="false" />
-                <element signature="e#1644#1676#1" expanded="false" />
-                <element signature="e#1767#2060#0" expanded="false" />
-                <element signature="e#1767#1959#1" expanded="false" />
-                <element signature="e#2099#2396#0" expanded="false" />
-                <element signature="e#2099#2289#1" expanded="false" />
-                <element signature="e#2431#2738#0" expanded="false" />
-                <element signature="e#2431#2613#1" expanded="false" />
-                <element signature="e#2772#3079#0" expanded="false" />
-                <element signature="e#2772#2952#1" expanded="false" />
-                <element signature="e#3119#3544#0" expanded="false" />
-                <element signature="e#3119#3311#1" expanded="false" />
-                <element signature="e#3583#4007#0" expanded="false" />
-                <element signature="e#3583#3773#1" expanded="false" />
-                <element signature="e#4045#4414#0" expanded="false" />
-                <element signature="e#4045#4233#1" expanded="false" />
-                <element signature="e#4451#4820#0" expanded="false" />
-                <element signature="e#4451#4637#1" expanded="false" />
-                <element signature="e#4918#5319#0" expanded="false" />
-                <element signature="e#4918#5239#1" expanded="false" />
-                <element signature="e#5419#6662#0" expanded="false" />
-                <element signature="e#5419#5868#1" expanded="false" />
-                <element signature="e#6088#6269#0" expanded="false" />
-                <element signature="e#6355#6536#0" expanded="false" />
-                <element signature="e#6758#7157#0" expanded="false" />
-                <element signature="e#6758#7079#1" expanded="false" />
-                <element signature="e#7255#8491#0" expanded="false" />
-                <element signature="e#7255#7703#1" expanded="false" />
-                <element signature="e#7919#8098#0" expanded="false" />
-                <element signature="e#8184#8365#0" expanded="false" />
-                <element signature="e#8537#9119#0" expanded="false" />
-                <element signature="e#8537#8689#1" expanded="false" />
-                <element signature="e#9174#10196#0" expanded="false" />
-                <element signature="e#9174#9344#1" expanded="false" />
-                <element signature="e#10433#11184#0" expanded="false" />
-                <element signature="e#10433#10725#1" expanded="false" />
-                <element signature="e#11212#11690#0" expanded="false" />
-                <element signature="e#11212#11346#1" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/utils/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="129" column="0" lean-forward="true" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
-              <folding>
-                <element signature="e#72#87#0" expanded="true" />
-                <element signature="e#407#4641#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="options-scrape.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/options-scrape.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1575">
-              <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gfinance.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/gfinance.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cmvolt_download.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/cmvolt_download.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="41" column="24" lean-forward="false" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
-              <folding>
-                <element signature="e#66#84#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fovolt.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/fovolt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="40" column="0" lean-forward="false" selection-start-line="40" selection-start-column="0" selection-end-line="48" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="fdelta-volt.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/nse/bin/fdelta-volt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1920">
-              <caret line="137" column="0" lean-forward="false" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
-              <folding>
-                <element signature="e#137#149#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -233,6 +92,8 @@
       <find>ratio</find>
       <find>.NS</find>
       <find>skip</find>
+      <find>Data alread</find>
+      <find>comment=</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -275,8 +136,8 @@
         <option value="$PROJECT_DIR$/nse/bin/test.py" />
         <option value="$PROJECT_DIR$/nse/utils/utils.py" />
         <option value="$PROJECT_DIR$/nse/bin/scratch.py" />
-        <option value="$PROJECT_DIR$/nse/bin/get_futures.py" />
         <option value="$PROJECT_DIR$/nse/bin/pairTrader.py" />
+        <option value="$PROJECT_DIR$/nse/bin/get_futures.py" />
       </list>
     </option>
   </component>
@@ -287,8 +148,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="124" />
-    <option name="y" value="23" />
+    <option name="x" value="1906" />
+    <option name="y" value="120" />
     <option name="width" value="1200" />
     <option name="height" value="830" />
   </component>
@@ -723,7 +584,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="124" y="23" width="1200" height="830" extended-state="0" />
+    <frame x="1906" y="120" width="1200" height="830" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15583333" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -886,17 +747,7 @@
         <state relative-caret-position="1575">
           <caret line="108" column="0" lean-forward="false" selection-start-line="108" selection-start-column="0" selection-end-line="108" selection-end-column="0" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nse/bin/fdelta-volt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1920">
-          <caret line="137" column="0" lean-forward="false" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
-          <folding>
-            <element signature="e#137#149#0" expanded="true" />
+            <element signature="e#0#14#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -914,7 +765,7 @@
         <state relative-caret-position="120">
           <caret line="9" column="22" lean-forward="false" selection-start-line="9" selection-start-column="22" selection-end-line="9" selection-end-column="22" />
           <folding>
-            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#0#35#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -924,7 +775,7 @@
         <state relative-caret-position="510">
           <caret line="41" column="24" lean-forward="false" selection-start-line="41" selection-start-column="24" selection-end-line="41" selection-end-column="24" />
           <folding>
-            <element signature="e#66#84#0" expanded="true" />
+            <element signature="e#66#84#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -939,14 +790,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nse/bin/nse4.py">
+    <entry file="file://$PROJECT_DIR$/nse/bin/scratch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="687">
-          <caret line="112" column="8" lean-forward="false" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="29" />
+        <state relative-caret-position="15">
+          <caret line="1" column="24" lean-forward="false" selection-start-line="1" selection-start-column="24" selection-end-line="2" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/fdelta-volt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="678">
+          <caret line="137" column="0" lean-forward="false" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#516#1046#0" expanded="false" />
-            <element signature="e#1135#1682#0" expanded="false" />
+            <element signature="e#137#149#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -954,9 +811,9 @@
     <entry file="file://$PROJECT_DIR$/nse/utils/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
-          <caret line="129" column="0" lean-forward="true" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
+          <caret line="129" column="0" lean-forward="false" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
           <folding>
-            <element signature="e#72#87#0" expanded="true" />
+            <element signature="e#72#87#0" expanded="false" />
             <element signature="e#407#4641#0" expanded="false" />
           </folding>
         </state>
@@ -1015,45 +872,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/nse/bin/scratch.py">
+    <entry file="file://$PROJECT_DIR$/nse/bin/nse4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="24" lean-forward="false" selection-start-line="1" selection-start-column="24" selection-end-line="2" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/nse/bin/get_futures.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="452">
-          <caret line="143" column="50" lean-forward="true" selection-start-line="143" selection-start-column="50" selection-end-line="143" selection-end-column="50" />
+        <state relative-caret-position="604">
+          <caret line="112" column="8" lean-forward="false" selection-start-line="112" selection-start-column="8" selection-end-line="112" selection-end-column="29" />
           <folding>
-            <element signature="n#!!doc" expanded="false" />
-            <element signature="e#148#160#0" expanded="true" />
-            <element signature="e#653#780#0" expanded="false" />
-            <element signature="e#791#1305#0" expanded="false" />
-            <element signature="e#1631#1715#0" expanded="false" />
-            <element signature="e#1780#1897#0" expanded="false" />
-            <element signature="e#1956#2486#0" expanded="false" />
-            <element signature="e#1980#2195#0" expanded="false" />
-            <element signature="e#2206#2423#0" expanded="false" />
-            <element signature="e#3567#3741#0" expanded="false" />
-            <element signature="e#3593#3667#0" expanded="false" />
-            <element signature="e#3620#3667#0" expanded="false" />
-            <element signature="e#3828#3861#0" expanded="false" />
-            <element signature="e#3884#3923#0" expanded="false" />
-            <element signature="e#5206#5423#1" expanded="false" />
-            <element signature="e#5425#5774#1" expanded="false" />
+            <element signature="e#0#19#0" expanded="false" />
+            <element signature="e#516#1046#0" expanded="false" />
+            <element signature="e#1135#1682#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/nse/bin/pairTrader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="598">
-          <caret line="323" column="27" lean-forward="false" selection-start-line="323" selection-start-column="27" selection-end-line="323" selection-end-column="27" />
+        <state relative-caret-position="672">
+          <caret line="67" column="0" lean-forward="false" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/nse/bin/get_futures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="26" column="23" lean-forward="false" selection-start-line="26" selection-start-column="23" selection-end-line="26" selection-end-column="23" />
+          <folding>
+            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#148#160#0" expanded="true" />
+            <element signature="e#745#874#0" expanded="false" />
+            <element signature="e#886#1405#0" expanded="false" />
+            <element signature="e#1780#1864#0" expanded="false" />
+            <element signature="e#1929#2046#0" expanded="false" />
+            <element signature="e#2105#2635#0" expanded="false" />
+            <element signature="e#2129#2344#0" expanded="false" />
+            <element signature="e#2355#2572#0" expanded="false" />
+            <element signature="e#3716#3890#0" expanded="false" />
+            <element signature="e#3742#3816#0" expanded="false" />
+            <element signature="e#3769#3816#0" expanded="false" />
+            <element signature="e#3977#4010#0" expanded="false" />
+            <element signature="e#4033#4072#0" expanded="false" />
+            <element signature="e#5781#5998#1" expanded="false" />
+            <element signature="e#6000#6349#1" expanded="false" />
           </folding>
         </state>
       </provider>

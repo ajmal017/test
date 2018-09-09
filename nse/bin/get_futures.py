@@ -16,31 +16,35 @@ import matplotlib.pyplot as plt
 import pairTrader
 
 #variables
-pfilter = 0.05
-front_expiry = '2018,09,27'
-back_expiry = '2018,10,25'
-start_day = '2018,08,01'
-end_day = '2018,08,31'
+class constants:
+	pfilter = 0.05
+	front_expiry = '2018,09,27'
+	back_expiry = '2018,10,25'
+	start_day = '2018,08,01'
+	end_day = '2018,08,31'
 
-timestr = time.strftime("%Y%m%d")
-location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
-#location= "e:\\Python2.7\\projects\\test\\data\\"
+	#timestr = time.strftime("%Y%m%d")
+	timestr = "20180906"
+	location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
+	directory_name = location + timestr + '/'
+	#location= "e:\\Python2.7\\projects\\test\\data\\"
 
-banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
-			 'IDFCBANK','INDUSINDBK','KOTAKBANK',
-			 'PNB','RBLBANK','SBIN','YESBANK']
-nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
-'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
-'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
-'KOTAKBANK','LT','LUPIN','M&M','MARUIT','NTPC','ONGC','POWERGRID','INFRATEL','RELIANCE','SBIN',
-'SUNPHARMA','TCS','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM','ULTRATECH','EICHERMOT','WIPRO','YESBANK',
-'ZEEL','TATAMTRDVR']
-usfutures = ['esu18','clv18','gcz18','nqu18']
-grains = ['ZC','ZS','ZW','ZL','ZM','ZO','XK','XW','XC']
-METALS = ['GC','HG','SI','PL','PA','MGC','YG','YI']
-#ENERGY = ['BRN','NG','CL','HO','RB','QM','WBS','BZ','QG']
-ENERGY = ['cbx18','clv18','clx18']
-INDICES = ['ES','NQ','YM','TF','NKD','RTY']
+	banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
+				 'IDFCBANK','INDUSINDBK','KOTAKBANK',
+				 'PNB','RBLBANK','SBIN','YESBANK']
+	nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
+	'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
+	'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
+	'KOTAKBANK','LT','LUPIN','M&M','MARUIT','NTPC','ONGC','POWERGRID','INFRATEL','RELIANCE','SBIN',
+	'SUNPHARMA','TCS','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM','ULTRATECH','EICHERMOT','WIPRO','YESBANK',
+	'ZEEL','TATAMTRDVR']
+	usfutures = ['esu18','clv18','gcz18','nqu18']
+	grains = ['ZC','ZS','ZW','ZL','ZM','ZO','XK','XW','XC']
+	METALS = ['GC','HG','SI','PL','PA','MGC','YG','YI']
+	#ENERGY = ['BRN','NG','CL','HO','RB','QM','WBS','BZ','QG']
+	ENERGY = ['cbx18','clv18','clx18']
+	INDICES = ['esu18','nqu18','ymu18']
+	mBasket = ['AAPL','AMD','MU','NVDA','PEP','COKE']
 
 
 
@@ -112,15 +116,23 @@ def main():
 		name = 'banknifty'
 		basket = banknifty
 	if args['US']:
-		name = 'ENERGY'
-		basket = ENERGY
+		name = 'INDICES'
+		basket = constants.INDICES
 
-	filename = '%s_%s.csv' % (name,timestr)
-	name  = location+filename
-	if os.path.isfile(name):
-		print 'Data already downloaded'
+	directory_name = constants.directory_name
+	try:
+
+		if not os.path.isdir(directory_name):
+			os.makedirs(directory_name)
+	except Exception,e:
+		print e
+
+	filename = '%s_%s.csv' % (name,constants.timestr)
+
+	if os.path.isfile(directory_name+filename):
+		print 'Data already downloaded in file: %s' %(directory_name+filename)
 		try:
-			data = pd.read_csv(name)
+			data = pd.read_csv(directory_name+filename,comment='"')
 			#Set Date as index
 			data.set_index('Date', inplace=True)
 			data.sort_values(by=['Date'],ascending=False)
@@ -131,24 +143,28 @@ def main():
 			data = pairTrader.pullData(stockY=args['stockY'],stockX=args['stockX'],
 				 						future=args['future'], nifty=args['nifty'],
 									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
-			 							basket=basket, filename=filename)
+			 							basket=basket, filename=directory_name+filename)
 		else:
-			data = pairTrader.usfutures(basket=basket, filename=filename)
+			data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
 
 
 	# Heatmap to show the p-values of the cointegration test
 	# between each pair of stocks
+	"""
 	scores, pvalues, pairs = pairTrader.find_cointegrated_pairs(data, pfilter)
 	if pairs:
+		
 		print '\nPossible pair trade in the followig pairs:\n',pairs
 		print 'Confidence Threshold: %s' % pfilter
 		print 'Will be checking for qualifying pairs'
 
 	else:
 		print '\nNo possible pair trades found in basket : %s as pvalue of all pairs is more than %s' %(basket, pfilter)
-
-	name = pairTrader.LRegression_allPairs(data, filename)
-	pairTrader.LRegression_qualifiedPairs1(data, name)
+	"""
+	# Run Linear regression on all the possible pairs in basket and create a csv file
+	_name = pairTrader.LRegression_allPairs(data, filename)
+	# Filter the above csv file and only show qualifying trades
+	pairTrader.LRegression_qualifiedPairs1(data, _name)
 
 	""""#Seaborn Heatmap plot for pairs in the basket
 	m = [0,0.2,0.4,0.6,0.8,1]
