@@ -23,11 +23,13 @@ class constants:
 	start_day = '2018,08,01'
 	end_day = '2018,08,31'
 
-	#timestr = time.strftime("%Y%m%d")
-	timestr = "20180906"
+	timestr = time.strftime("%Y%m%d")
+	#timestr = "20180906"
 	location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
 	directory_name = location + timestr + '/'
 	#location= "e:\\Python2.7\\projects\\test\\data\\"
+
+	current_filename = directory_name + '../open_trades/current.csv'
 
 	banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
 				 'IDFCBANK','INDUSINDBK','KOTAKBANK',
@@ -45,7 +47,7 @@ class constants:
 	ENERGY = ['cbx18','clv18','clx18']
 	INDICES = ['esu18','nqu18','ymu18']
 	mBasket = ['AAPL','AMD','MU','NVDA','PEP','COKE']
-
+	#banknifty_lots = [('AXISBANK',1200), ('BANKBARODA',),('HDFCBANK',),('ICICIBANK',),('IDFCBANK',),('INDUSINDBK',),('KOTAKBANK',),('PNB',5500),('RBLBANK',),('SBIN',),('YESBANK')]
 
 
 
@@ -83,8 +85,8 @@ def get_futures_data(ticker,start_day,end_day,expiry):
 
 def main():
 	parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
-	parser.add_argument('-s1', '--stockY', help='NSE first stock symbol', required=False)
-	parser.add_argument('-s2', '--stockX', help='NSE second stock symbol', required=False)
+	parser.add_argument('-s1', '--YStock', help='NSE first stock symbol', required=False)
+	parser.add_argument('-s2', '--XStock', help='NSE second stock symbol', required=False)
 	parser.add_argument('-d', '--delta', help='Start date', required=False, default=200)
 	parser.add_argument('-f', '--future', help='Flag for stock futures', required=False, action='store_true', default=False)
 	parser.add_argument('-I', '--nifty', help='Flag for NIFTY index', required=False, action='store_true', default=False)
@@ -100,9 +102,9 @@ def main():
 
 	#print('Fetching Last %s days of data' % (args['delta']))
 
-	if args['stockY']:
+	if args['YStock']:
 		if not args['future']:
-			if not args['stockX']:
+			if not args['XStock']:
 				print 'Please mention second stock'
 				exit(0)
 		else:
@@ -111,10 +113,10 @@ def main():
 	##Check if NIFTY or BANKNIFTY or US Futures has been specified
 	if args['nifty']:
 		name = 'nifty'
-		basket = nifty50
+		basket = constants.nifty50
 	if args['bnifty']:
 		name = 'banknifty'
-		basket = banknifty
+		basket = constants.banknifty
 	if args['US']:
 		name = 'INDICES'
 		basket = constants.INDICES
@@ -147,6 +149,9 @@ def main():
 		else:
 			data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
 
+	if args['YStock'] and args['XStock']:
+		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
+		exit(0)
 
 	# Heatmap to show the p-values of the cointegration test
 	# between each pair of stocks

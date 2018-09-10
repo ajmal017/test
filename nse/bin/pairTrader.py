@@ -9,6 +9,7 @@ from statsmodels.tsa.stattools import coint
 import nsepy
 import os, sys
 from get_futures import constants
+from termcolor import colored
 
 ##Reference:
 ## https://stackoverflow.com/questions/32101233/appending-predicted-values-and-residuals-to-pandas-dataframe
@@ -31,7 +32,7 @@ def create_file_from_df(fName, df):
     except Exception, e:
         print e
 
-    print 'Created file : %s' % fName
+    print 'Created Merged Data file : %s' % fName
     return None
 
 def usfutures(basket, filename):
@@ -223,7 +224,7 @@ def LRegression_allPairs(data, filename):
 
     name = directory_name+'allPairs_'+filename
     running_df.to_csv(name)
-    print 'Created All Pairs trader file: %s' % (name)
+    print '\nCreated All Pairs trader file: %s' % (name)
     return name
 
 def LRegression_qualifiedPairs(data, pairs, filename):
@@ -292,8 +293,10 @@ def LRegression_qualifiedPairs1(data, filename):
     sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
     keys = data.keys()
     n = data.shape[1]
+    print '## Trying to find pairs qualifying for a trade ##'
     try:
         data = pd.read_csv(filename,skiprows=1,names=columns)
+        print 'Successfully read file: %s' % filename
     except Exception,e:
         print 'Unable to read file: %s' % filename
         print e
@@ -311,26 +314,31 @@ def LRegression_qualifiedPairs1(data, filename):
 
     filename = filename.split('.csv')[0]
 
+    print colored('## Qualified trades ##', 'red')
     name = filename + '_qualified_over2SD.csv'
     if not frame_over2SD.empty:
         frame_over2SD.to_csv(name)
-        print frame_over2SD
-        print 'Created qualified pair trader file: %s' % (name)
+        print colored('INFO: Over 2SD','red')
+        print colored(frame_over2SD,'green')
+        print colored('Created qualified pair trader file: %s\n' % (name),'blue')
     name = filename + '_qualified_less2SD.csv'
     if not frame_less2SD.empty:
+        print colored('INFO: Less than 2SD', 'red')
         frame_less2SD.to_csv(name)
-        print frame_less2SD
-        print 'Created qualified pair trader file: %s' % name
+        print colored(frame_less2SD, 'green')
+        print colored('Created qualified pair trader file: %s\n' % name,'blue')
     name = filename + '_qualified_over3SD.csv'
     if not frame_over3SD.empty:
+        print colored('INFO: Over 3SD', 'red')
         frame_over3SD.to_csv(name)
-        print frame_over3SD
-        print 'Created qualified pair trader file: %s' % name
+        print colored(frame_over3SD, 'green')
+        print colored('Created qualified pair trader file: %s\n' % name,'blue')
     name = filename + '_qualified_less3SD.csv'
     if not frame_less3SD.empty:
+        print colored('INFO: Less than 3SD', 'red')
         frame_less3SD.to_csv(name)
-        print frame_less3SD
-        print 'Created qualified pair trader file: %s' % name
+        print colored(frame_less3SD, 'green')
+        print colored('Created qualified pair trader file: %s\n' % name,'blue')
 
     #print data[pvalue_boolean & std_err_boolean]
     """
@@ -374,3 +382,20 @@ def LRegression_qualifiedPairs1(data, filename):
     return None
     """
     return None
+
+def model_current_std_err(data, YStock, XStock):
+
+    columns = ['YStock', 'XStock']
+    current_data = pd.read_csv(constants.current_filename,names=columns)
+
+    print colored('Successfully read file: %s' % constants.current_filename,'cyan')
+
+    Y = np.asarray(data[YStock])
+    X = np.asarray(data[XStock])
+    _y = np.append(Y, current_data.YStock)
+    _x = np.append(X, current_data.XStock)
+
+    model = linreg(Y=_y, X=_x)
+    print colored('Model\'s current std error: %s\n' % get_current_std_err(model), 'yellow')
+
+    pass
