@@ -14,6 +14,7 @@ import datetime
 import seaborn
 import matplotlib.pyplot as plt
 import pairTrader
+from os.path import expanduser
 
 #variables
 class constants:
@@ -25,7 +26,7 @@ class constants:
 
 	timestr = time.strftime("%Y%m%d")
 	#timestr = "20180906"
-	location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
+	location = expanduser("~")+"/projects/test/data/"
 	directory_name = location + timestr + '/'
 	#location= "e:\\Python2.7\\projects\\test\\data\\"
 
@@ -142,7 +143,7 @@ def main():
 			print e
 	else:
 		if args['nifty'] or args['bnifty']:
-			data = pairTrader.pullData(stockY=args['stockY'],stockX=args['stockX'],
+			data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
 				 						future=args['future'], nifty=args['nifty'],
 									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
 			 							basket=basket, filename=directory_name+filename)
