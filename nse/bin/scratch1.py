@@ -13,7 +13,7 @@ class const:
     #holidays = [dt(year,1,1),dt(year,1,15),dt(year,2,19),
     #            dt(year,3,30),dt(year,5,28),dt(year,7,3),dt(year,7,4),
     #            dt(year,9,3),dt(year,11,22),dt(year,11,23),dt(year,12,24),dt(year,12,25)]
-    directory = 'C:\\Users\\abhishek\\Documents\\projects\\test\\data\\usfutures\\'
+    directory = 'C:\\Users\\abhi\\Documents\\projects\\test\\data\\usfutures\\'
     futures = ['CL','GC','QM','NG','QG']
     months = ['q','u','v','x','z']
     CL = ['clq%s' %year, 'clu%s' %year, 'clv%s' %year, 'clx%s' %year, 'clz%s' %year]
@@ -135,22 +135,25 @@ def merge_basket_frames(basket):
             exit(0)
 
     name = const.directory + const.timestr + '\\' + basket[0] + '.csv'
-    first_stock = pd.read_csv(name, names=columns, skiprows=1,comment=comment)
+    first_stock = pd.read_csv(name, names=columns, skiprows=1,comment=comment, index_col='Date')
+    print first_stock.head()
+    first_stock.dropna()
     print 'Read successful: %s' % name
     for i in range(1,len(basket)):
         _ = const.directory + const.timestr + '\\' + basket[i] + '.csv'
-        dfstock = pd.read_csv(_, names=columns, skiprows=1,comment=comment)
+        dfstock = pd.read_csv(_, names=columns, skiprows=1,comment=comment, index_col='Date')
+        dfstock.dropna()
         print 'Read successful: %s' % _
         if i == 1:
             data = pd.concat([first_stock['Settle'].rename(basket[0]),
                               dfstock['Settle'].rename(basket[i])],
-                             axis=1)
+                             axis=1, sort=False)
         else:
             data = pd.concat([data, dfstock['Settle'].rename(basket[i])],
-                             axis=1)
+                             axis=1, sort=False)
 
     data.replace([np.inf, -np.inf], np.nan).dropna()
-    #data.sort_values(by=['Time'], ascending=False)
+    data = data.dropna(how='any')
     tocsv(name=const.filename_for_merge_futures, data=data)
 
     return data
@@ -179,7 +182,7 @@ def main():
     parser.add_argument('-d', '--delta', help='No. of days of history to pull', required=False, default=300)
     args = vars(parser.parse_args())
 
-    convert_to_continuous(delta = args['delta'])
+    #convert_to_continuous(delta = args['delta'])
     merge_basket_frames(basket=const.futures)
 
 

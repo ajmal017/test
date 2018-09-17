@@ -29,11 +29,11 @@ class constants:
 	timestr = time.strftime("%Y%m%d")
 	#timestr = "20180906"
 	#location = expanduser("~")+"/projects/test/data/"
-	location = "C:\\Users\\abhishek\\Documents\\projects\\test\\data\\"
+	location = "C:\\Users\\abhi\\Documents\\projects\\test\\data\\"
 	directory_name = location + timestr + '/'
 	#location= "e:\\Python2.7\\projects\\test\\data\\"
 
-	#current_filename = directory_name + '/open_trades/current.csv'
+	current_filename = directory_name + '..\\open_trades\\current.csv'
 	
 	
 	banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
