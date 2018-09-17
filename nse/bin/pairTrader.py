@@ -36,7 +36,9 @@ def create_file_from_df(fName, df):
     return None
 
 def usfutures(basket, filename):
-
+    ## Convert the basket stocks individual frames to a single dataframe in
+    ## format: <date.index Stock1 Stock2 Stock3>
+    ##          data       'price' 'price' 'price'
     comment = 'D'
     timestr = time.strftime("%m-%d-%Y")
     columns = ['Time','Open','High','Low','Last','Change','Volume','Open Interest']
