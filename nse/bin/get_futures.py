@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import pairTrader
 from os.path import expanduser
 import colorama
+import platform
 
 colorama.init()
 #variables
@@ -28,12 +29,17 @@ class constants:
 
 	timestr = time.strftime("%Y%m%d")
 	#timestr = "20180906"
+	script_dir = os.path.dirname(os.path.abspath(__file__))
+
+	location = script_dir + '/../../data/'
+
+	#location = "C:\\Users\\abhi\\Documents\\projects\\test\\data\\"
 	#location = expanduser("~")+"/projects/test/data/"
-	location = "C:\\Users\\abhi\\Documents\\projects\\test\\data\\"
+
 	directory_name = location + timestr + '/'
 	#location= "e:\\Python2.7\\projects\\test\\data\\"
 
-	current_filename = directory_name + '..\\open_trades\\current.csv'
+	current_filename = directory_name + '../open_trades/current.csv'
 	
 	
 	banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
@@ -64,7 +70,7 @@ def convert_date(stringO):
 
 def get_stock_data(ticker, start_day, end_day, expiry=None):
 
-	df = get_history(symbol=ticker,
+	df = nsepy.get_history(symbol=ticker,
 					   start=convert_date(start_day),
 					   end=convert_date(end_day))
 
@@ -74,13 +80,13 @@ def get_futures_data(ticker,start_day,end_day,expiry):
 
 	if ticker == 'NIFTY':
 		# Stock options (Similarly for index options, set index = True)
-		df = get_history(symbol=ticker, start=convert_date(start_day),
+		df = nsepy.get_history(symbol=ticker, start=convert_date(start_day),
 						 end=convert_date(end_day), index=True,
 						 expiry_date=convert_date(expiry))
 
 	else:
 		# Stock options (Similarly for index options, set index = True)
-		df = get_history(symbol=ticker,start=convert_date(start_day),
+		df = nsepy.get_history(symbol=ticker,start=convert_date(start_day),
 			 			 end=convert_date(end_day),futures=True,
 			 			 expiry_date=convert_date(expiry))
 

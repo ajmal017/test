@@ -17,7 +17,8 @@ class const:
     location = script_dir + '/../../data/'
     directory = script_dir + '/../../data/usfutures/'
     #directory = 'C:\\Users\\abhi\\Documents\\projects\\test\\data\\usfutures\\'
-    futures = ['CL','GC','QM','NG','QG']
+
+    futures = ['CME_YM2','CME_CL18','CME_NQ2','CME_ES2', 'CME_GC2']
     months = ['q','u','v','x','z']
     CL = ['clq%s' %year, 'clu%s' %year, 'clv%s' %year, 'clx%s' %year, 'clz%s' %year]
     GC = ['gcq%s' %year, 'gcu%s' %year, 'gcv%s' %year, 'gcx%s' %year, 'gcz%s' %year]
@@ -73,54 +74,39 @@ def futures_rollover_weights(start_date, expiry_dates, contracts, rollover_days=
         prev_date = ex_date
     return roll_weights
 
-def convert_to_continuous(delta):
+def pulldata(delta):
     # Initialize
     eTime = datetime.date.today()
     t_delta = datetime.timedelta(days=int(delta))
     sTime = eTime - t_delta
 
-    columns = ['Settle']
+    columns = ['Date','Settle']
     running_df = pd.DataFrame(columns=columns)
     _dict = {}
     expiry_series = pd.Series
 
-    for i in range(len(const.futures)):
+    first_contract = quandl.get("CHRIS/%s" % const.futures[0],authtoken="3v1zXUSUxysjyohgAQ3e",start_date=sTime, end_date=eTime)
+    first_contract.name = const.futures[0]
+    for i in range(1,len(const.futures)):
         # Scratch Variable
         list_of_df = []
         print 'Futures:', const.futures[i]
-        first_contract_name = '%s%s%s' % (const.futures[i].upper(), const.months[0].upper(), const.year)
+        contract_name = const.futures[i]
+        print 'Downloading: %s' % contract_name
+        data = quandl.get("CHRIS/%s" % contract_name, authtoken="3v1zXUSUxysjyohgAQ3e",start_date=sTime, end_date=eTime)
+        data.name = contract_name
+        list_of_df.append(data)
+        tocsv(data)
 
-        for j in range(len(const.months)):
+        if i == 1:
+            running_df = pd.concat([list_of_df[0].Settle.rename(const.futures[0]),
+                                    data.Settle.rename(contract_name)], axis=1)
+        else:
+            running_df = pd.concat([running_df, data.Settle.rename(contract_name)], axis=1)
 
-            contract_name = '%s%s%s' % (const.futures[i].upper(), const.months[j].upper(), const.year)
-            print 'Downloading: %s' % contract_name
-            data = quandl.get("CME/%s" % contract_name, authtoken="3v1zXUSUxysjyohgAQ3e",
-                              start_date=sTime, end_date=eTime)
-            data.name = '%s%s%s' % (const.futures[i].upper(), const.months[j].upper(), const.year)
-            list_of_df.append(data)
-            # tocsv(data)
-
-            if j == 1:
-                running_df = pd.concat([list_of_df[0].Settle.rename(first_contract_name),
-                                        list_of_df[1].Settle.rename(contract_name)], axis=1)
-            else:
-                running_df = pd.concat([running_df, list_of_df[j].Settle.rename(contract_name)], axis=1)
-            # Add to expiry dictionary containing the expiry dates
-            _dict[contract_name] = const.expiry_dates[j]
-
-        expiry_series = pd.Series(_dict)
-
-        # Obtain the rollover weighting matrix/DataFrame
-        weights = futures_rollover_weights(list_of_df[0].index[0], expiry_series, running_df.columns)
-        # Construct the continuous future of the Future contracts
-        wti_cts = (running_df * weights).sum(1).dropna()
-
-        # Output the merged series of contract settle prices
-        cts = pd.DataFrame({'Date': wti_cts.index, 'Settle': wti_cts.values})
-        name = const.futures[i].upper()
-        cts.set_index('Date', inplace=True)
-        cts = cts[cts.Settle != 0.000]
-        tocsv(data=cts, name=name)
+    # Output the merged series of contract settle prices
+    tocsv(data=running_df, name='MERGED')
+    return running_df
 
 
 def merge_basket_frames(basket):
@@ -185,8 +171,15 @@ def main():
     parser.add_argument('-d', '--delta', help='No. of days of history to pull', required=False, default=300)
     args = vars(parser.parse_args())
 
-    convert_to_continuous(delta = args['delta'])
-    merge_basket_frames(basket=const.futures)
+
+    data = pulldata(delta=args['delta'])
+    filename = '%s_%s.csv' % ('usfutures', const.timestr)
+    #convert_to_continuous(delta = args['delta'])
+    #merge_basket_frames(basket=const.futures)
+    # Run Linear regression on all the possible pairs in basket and create a csv file
+    _name = pairTrader.LRegression_allPairs(data, filename)
+    # Filter the above csv file and only show qualifying trades
+    pairTrader.LRegression_qualifiedPairs1(data, _name)
 
 
 if __name__=="__main__":
