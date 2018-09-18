@@ -26,9 +26,9 @@ class constants:
 	back_expiry = '2018,10,25'
 	start_day = '2018,08,01'
 	end_day = '2018,08,31'
+	expiry_date = datetime.date(2018, 9, 27)
 
 	timestr = time.strftime("%Y%m%d")
-	#timestr = "20180906"
 	script_dir = os.path.dirname(os.path.abspath(__file__))
 
 	location = script_dir + '/../../data/'
@@ -110,6 +110,7 @@ def main():
 	eTime = datetime.date.today()
 	t_delta = datetime.timedelta(days=int(args['delta']))
 	sTime = eTime - t_delta
+
 
 	#print('Fetching Last %s days of data' % (args['delta']))
 
