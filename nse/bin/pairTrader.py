@@ -10,6 +10,8 @@ import nsepy
 import os, sys
 from get_futures import constants
 from termcolor import colored
+import datetime
+import nsequoter
 
 ##Reference:
 ## https://stackoverflow.com/questions/32101233/appending-predicted-values-and-residuals-to-pandas-dataframe
@@ -304,10 +306,11 @@ def LRegression_qualifiedPairs1(data, filename):
         print e
     pvalue_boolean = data.PValue < 0.02
     data = data[pvalue_boolean]
-    less2SD = data['Current_STD_Error'] <= -2.0
-    greater2SD = data['Current_STD_Error'] >= 2.0
-    less3SD = data['Current_STD_Error'] <= -3.0
-    greater3SD = data['Current_STD_Error'] >= 3.0
+    less2SD = (data['Current_STD_Error'] <= -2.0) & (data['Current_STD_Error'] >= -3.0) & (data['Beta'] > 0.0)
+    greater2SD = (data['Current_STD_Error'] >= 2.0) & (data['Current_STD_Error'] <= 3.0) & (data['Beta'] > 0.0)
+    less3SD = (data['Current_STD_Error'] <= -3.0) & (data['Beta'] > 0.0)
+    greater3SD = (data['Current_STD_Error'] >= 3.0) & (data['Beta'] > 0.0)
+
 
     frame_over2SD = data[greater2SD]
     frame_less2SD = data[less2SD]
@@ -342,62 +345,34 @@ def LRegression_qualifiedPairs1(data, filename):
         print colored(frame_less3SD, 'green')
         print colored('Created qualified pair trader file: %s\n' % name,'blue')
 
-    #print data[pvalue_boolean & std_err_boolean]
-    """
-    for i in range(n):
-        for j in range(i+1,n):
-            Y = np.asarray(data[keys[i]])
-            X = np.asarray(data[keys[j]])
-            model = linreg(Y=Y, X=X)
-            inverse_model = linreg(Y=X, X=Y)
 
-        if get_std_err_ratio(model) < get_std_err_ratio(inverse_model):
-            ## Condition for checking which stock will be Y and which will be X
-            ## Then choose the type of trade depending upon the current std_err value
-            #print '\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j])
-            if get_current_std_err(model) <= sd_matrix[1]:
-                qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
-                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
-                print 'Buy : %s Sell %s' % (k,v)
-            if get_current_std_err(model) >= sd_matrix[4]:
-                qualified_df.loc[len(qualified_df)] = set_values(model, Y=k, X=v)
-                print 'Qualified Trade: YStock = %s and XStock = %s' % (k,v)
-                print 'Sell : %s Buy %s' % (k,v)
-
-        else:
-            #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
-            if get_current_std_err(inverse_model) <= sd_matrix[1]:
-                qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=v, X=k)
-                print 'Qualified Trade: YStock = %s and XStock = %s' % (v,k)
-                print 'Buy : %s Sell %s' % (v,k)
-            if get_current_std_err(inverse_model) >= sd_matrix[4]:
-                qualified_df.loc[len(qualified_df)] = set_values(inverse_model, Y=k, X=v)
-                print 'Qualified Trade: YStock = %s and XStock = %s' % (v, k)
-                print 'Buy : %s Sell %s' % (v, k)
-
-    name = location+'qualified_'+filename
-    if not qualified_df.empty:
-        qualified_df.to_csv(name)
-        print 'Created qualified pair trader file: %s' % (name)
-    else:
-        print 'No qualified pairs identified.'
-    return None
-    """
     return None
 
 def model_current_std_err(data, YStock, XStock):
 
     columns = ['YStock', 'XStock']
-    current_data = pd.read_csv(constants.current_filename,names=columns)
+    #Get current date
+    current_date = datetime.date.today()
+    #current_data = pd.read_csv(constants.current_filename,names=columns)
 
-    print colored('Successfully read file: %s' % constants.current_filename,'cyan')
+    try:
+        #Get current quote for YStock
+        ystock_price = nsequoter.get_futures_quote(YStock, current_date.strftime("%b"))
+        #Get current quote for YStock
+        xstock_price = nsequoter.get_futures_quote(XStock, current_date.strftime("%b"))
+        current_data = pd.DataFrame([[0, 1], [ystock_price, xstock_price]], columns=columns)
+        print colored('Current %s futures price: %s' % (YStock, ystock_price), 'cyan')
+        print colored('Current %s futures price: %s' % (XStock, xstock_price), 'cyan')
+        Y = np.asarray(data[YStock])
+        X = np.asarray(data[XStock])
+        _y = np.append(Y, current_data.YStock)
+        _x = np.append(X, current_data.XStock)
+        model = linreg(Y=_y, X=_x)
+        print colored('Model\'s current std error: %s\n' % get_current_std_err(model), 'yellow')
 
-    Y = np.asarray(data[YStock])
-    X = np.asarray(data[XStock])
-    _y = np.append(Y, current_data.YStock)
-    _x = np.append(X, current_data.XStock)
-
-    model = linreg(Y=_y, X=_x)
-    print colored('Model\'s current std error: %s\n' % get_current_std_err(model), 'yellow')
+    except Exception,e:
+        print colored('Unable to fetch current futures price','red')
+        print e
+    #print colored('Successfully read file: %s' % constants.current_filename,'cyan')
 
     pass

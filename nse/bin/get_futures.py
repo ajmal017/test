@@ -30,14 +30,8 @@ class constants:
 
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
-
 	location = script_dir + '/../../data/'
-
-	#location = "C:\\Users\\abhi\\Documents\\projects\\test\\data\\"
-	#location = expanduser("~")+"/projects/test/data/"
-
 	directory_name = location + timestr + '/'
-	#location= "e:\\Python2.7\\projects\\test\\data\\"
 
 	current_filename = directory_name + '../open_trades/current.csv'
 	
@@ -60,13 +54,6 @@ class constants:
 	mBasket = ['AAPL','AMD','MU','NVDA','PEP','COKE']
 	#banknifty_lots = [('AXISBANK',1200), ('BANKBARODA',),('HDFCBANK',),('ICICIBANK',),('IDFCBANK',),('INDUSINDBK',),('KOTAKBANK',),('PNB',5500),('RBLBANK',),('SBIN',),('YESBANK')]
 
-
-
-def convert_date(stringO):
-
-	convertedDate = datetime.strptime(stringO, "%Y,%m,%d").date()
-
-	return convertedDate
 
 def get_stock_data(ticker, start_day, end_day, expiry=None):
 
@@ -126,12 +113,12 @@ def main():
 	if args['nifty']:
 		name = 'nifty'
 		basket = constants.nifty50
-	if args['bnifty']:
-		name = 'banknifty'
-		basket = constants.banknifty
 	if args['US']:
 		name = 'INDICES'
 		basket = constants.INDICES
+	else:
+		name = 'banknifty'
+		basket = constants.banknifty
 
 	directory_name = constants.directory_name
 	try:
