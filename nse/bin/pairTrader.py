@@ -81,10 +81,16 @@ def pullData(stockY=None, stockX=None, future=False, nifty=False, bnifty=False, 
         exit(0)
 
     # merge = pd.DataFrame(columns=['Date'])
-    first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime,futures=True,expiry_date=constants.expiry_date)
+    if basket[0] == 'BANKNIFTY':
+        first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime,index=True,
+                                    futures=True,expiry_date=constants.expiry_date)
+    else:
+        first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime,
+                                    futures=True, expiry_date=constants.expiry_date)
 
     for i in range(1, len(basket)):
-        dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime,futures=True,expiry_date=constants.expiry_date)
+        dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime,
+                                    futures=True,expiry_date=constants.expiry_date)
 
         if i == 1:
             data = pd.concat([first_stock['Close'].rename(basket[0]),

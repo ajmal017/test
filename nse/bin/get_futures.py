@@ -36,7 +36,7 @@ class constants:
 	current_filename = directory_name + '../open_trades/current.csv'
 	
 	
-	banknifty = ['AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
+	banknifty = ['BANKNIFTY','AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
 				 'IDFCBANK','INDUSINDBK','KOTAKBANK',
 				 'PNB','RBLBANK','SBIN','YESBANK']
 	nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
