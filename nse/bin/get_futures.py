@@ -21,7 +21,7 @@ import platform
 colorama.init()
 #variables
 class constants:
-	pfilter = 0.05
+	pfilter = 0.02
 	front_expiry = '2018,09,27'
 	back_expiry = '2018,10,25'
 	start_day = '2018,08,01'
@@ -42,7 +42,7 @@ class constants:
 	nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
 	'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
 	'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
-	'KOTAKBANK','LT','LUPIN','M&M','MARUIT','NTPC','ONGC','POWERGRID','INFRATEL','RELIANCE','SBIN',
+	'KOTAKBANK','LT','LUPIN','M&M','MARUTI','NTPC','ONGC','POWERGRID','INFRATEL','RELIANCE','SBIN',
 	'SUNPHARMA','TCS','TATAMOTORS','TATAPOWER','TATASTEEL','TECHM','ULTRATECH','EICHERMOT','WIPRO','YESBANK',
 	'ZEEL','TATAMTRDVR']
 	usfutures = ['esu18','clv18','gcz18','nqu18']
@@ -55,7 +55,7 @@ class constants:
 	bnifty_lotsize = {'AXISBANK':1200, 'BANKBARODA': 4000,'HDFCBANK':500,'ICICIBANK':2750,
 					  'IDFCBANK':11000,'INDUSINDBK':300,'KOTAKBANK': 800,'PNB':5500,'RBLBANK':1200,
 					  'SBIN':3000,'YESBANK':1750,'BANKNIFTY':40}
-	header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'D-1_STD_Error']
+	header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Close_STD_Error']
 
 
 def get_stock_data(ticker, start_day, end_day, expiry=None):
@@ -156,6 +156,7 @@ def main():
 
 	if args['YStock'] and args['XStock']:
 		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
+		pairTrader.model_open_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
 		exit(0)
 
 	# Heatmap to show the p-values of the cointegration test

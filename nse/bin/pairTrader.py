@@ -12,6 +12,7 @@ from get_futures import constants
 from termcolor import colored
 import datetime
 import nsequoter
+import utils
 
 ##Reference:
 ## https://stackoverflow.com/questions/32101233/appending-predicted-values-and-residuals-to-pandas-dataframe
@@ -19,8 +20,8 @@ import nsequoter
 #location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
 #directory_name = location+timestr+'/'
 #
-#    Standard Error of Intercept – The variance of the intercept
-#    Standard Error – The variance of the residuals.
+#Standard Error of Intercept : The variance of the intercept
+#Standard Error : The variance of the residuals.
 #    Error Ratio = Standard Error of Intercept / Standard Error
 
 location = constants.location
@@ -390,5 +391,31 @@ def model_current_std_err(data, YStock, XStock):
         print colored('Unable to fetch current futures price','red')
         print e
     #print colored('Successfully read file: %s' % constants.current_filename,'cyan')
-
     pass
+
+def model_open_std_err(data, YStock, XStock):
+    columns = ['YStock', 'XStock']
+    try:
+        u = utils.Utils()
+        #Get current quote for YStock
+        ystock_open = u.get_open(YStock)
+        #Get current quote for YStock
+        xstock_open = u.get_open(XStock)
+        current_data = pd.DataFrame([[0, 1], [ystock_open, xstock_open]], columns=columns)
+        print colored('Open %s stock price: %s' % (YStock, ystock_open), 'cyan')
+        print colored('Open %s stock price: %s' % (XStock, xstock_open), 'cyan')
+        #Create an NP array from dataframe column containing the stock price history
+        # Y and X stock
+        Y = np.asarray(data[YStock])
+        X = np.asarray(data[XStock])
+        # Append the current respective stock prices to the above arrays
+        _y = np.append(Y, current_data.YStock)
+        _x = np.append(X, current_data.XStock)
+        model = linreg(Y=_y, X=_x)
+        print colored('Model\'s Open std error: %s\n' % get_current_std_err(model), 'yellow')
+
+    except Exception,e:
+        print colored('Unable to fetch open futures price','red')
+        print e
+
+    return None
