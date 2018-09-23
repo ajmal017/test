@@ -52,7 +52,10 @@ class constants:
 	ENERGY = ['cbx18','clv18','clx18']
 	INDICES = ['esu18','nqu18','ymu18']
 	mBasket = ['AAPL','AMD','MU','NVDA','PEP','COKE']
-	#banknifty_lots = [('AXISBANK',1200), ('BANKBARODA',),('HDFCBANK',),('ICICIBANK',),('IDFCBANK',),('INDUSINDBK',),('KOTAKBANK',),('PNB',5500),('RBLBANK',),('SBIN',),('YESBANK')]
+	bnifty_lotsize = {'AXISBANK':1200, 'BANKBARODA': 4000,'HDFCBANK':500,'ICICIBANK':2750,
+					  'IDFCBANK':11000,'INDUSINDBK':300,'KOTAKBANK': 800,'PNB':5500,'RBLBANK':1200,
+					  'SBIN':3000,'YESBANK':1750,'BANKNIFTY':40}
+	header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'D-1_STD_Error']
 
 
 def get_stock_data(ticker, start_day, end_day, expiry=None):
@@ -85,7 +88,7 @@ def main():
 	parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
 	parser.add_argument('-s1', '--YStock', help='NSE first stock symbol', required=False)
 	parser.add_argument('-s2', '--XStock', help='NSE second stock symbol', required=False)
-	parser.add_argument('-d', '--delta', help='Start date', required=False, default=200)
+	parser.add_argument('-d', '--delta', help='Start date', required=False, default=262)
 	parser.add_argument('-f', '--future', help='Flag for stock futures', required=False, action='store_true', default=False)
 	parser.add_argument('-I', '--nifty', help='Flag for NIFTY index', required=False, action='store_true', default=False)
 	parser.add_argument('-B', '--bnifty', help='Flag for BANK NIFTY index', required=False, action='store_true', default=False)
@@ -141,6 +144,9 @@ def main():
 			print e
 	else:
 		if args['nifty'] or args['bnifty']:
+			print sTime
+			print eTime
+			print t_delta
 			data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
 				 						future=args['future'], nifty=args['nifty'],
 									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
