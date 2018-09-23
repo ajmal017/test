@@ -18,6 +18,10 @@ import nsequoter
 ## Quantopian Lecture: https://www.quantopian.com/posts/quantopian-lecture-series-linear-regression
 #location = "/Users/abhishek.chaturvedi/Downloads/Rough/projects/test/data/"
 #directory_name = location+timestr+'/'
+#
+#    Standard Error of Intercept – The variance of the intercept
+#    Standard Error – The variance of the residuals.
+#    Error Ratio = Standard Error of Intercept / Standard Error
 
 location = constants.location
 timestr = constants.timestr
@@ -82,15 +86,12 @@ def pullData(stockY=None, stockX=None, future=False, nifty=False, bnifty=False, 
 
     # merge = pd.DataFrame(columns=['Date'])
     if basket[0] == 'BANKNIFTY':
-        first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime,index=True,
-                                    futures=True,expiry_date=constants.expiry_date)
+        first_stock = nsepy.get_history(symbol=basket[0].upper(), start=sTime, end=eTime,index=True)
     else:
-        first_stock = nsepy.get_history(symbol=basket[0], start=sTime, end=eTime,
-                                    futures=True, expiry_date=constants.expiry_date)
+        first_stock = nsepy.get_history(symbol=basket[0].upper(), start=sTime, end=eTime)
 
     for i in range(1, len(basket)):
-        dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime,
-                                    futures=True,expiry_date=constants.expiry_date)
+        dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime)
 
         if i == 1:
             data = pd.concat([first_stock['Close'].rename(basket[0]),
@@ -129,15 +130,19 @@ def linreg(Y, X):
     return model
 
 def get_std_err_intercept(model):
+    #Variance of Intercept
     return  model.bse[0]
 def get_std_err(model):
+    #Variance of Residuals
     return model.resid.std()
 def get_std_err_ratio(model):
     ##Choose the least std error ratio
     return get_std_err_intercept(model) / get_std_err(model)
 def get_alpha(model):
+    #Coefficient or Intercept or ALPHA
     return '%.2f' % model.params[0]
 def get_beta(model):
+    #Beta
     return '%.2f' %model.params[1]
 def get_pvalue(model):
     return '%.2f' % model.f_pvalue
@@ -190,6 +195,7 @@ def set_values(model, Y, X):
     rows_list.append(get_alpha(model))
     rows_list.append(get_current_std_err(model))
 
+
     """
     running_df.YStock = Y
     running_df.XStock = X
@@ -210,12 +216,11 @@ def LRegression_allPairs(data, filename):
     ## Perform linear regression on all the possible pairs in the provided basket of stocks
     ## Store their OLS model results and write them out to a csv file
     """
-    header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
-    running_df = pd.DataFrame(columns=header)
-    qualified_df = pd.DataFrame(columns=header)
+    columns = constants.header
+    running_df = pd.DataFrame(columns=columns)
+    qualified_df = pd.DataFrame(columns=columns)
     data = data.dropna()
     n = data.shape[1]
-
     keys = data.keys()
 
     for i in range(n):
@@ -298,7 +303,7 @@ def LRegression_qualifiedPairs1(data, filename):
         2. Filter for only those Y:X stock pairs which have the std_err (variance of current residuals) above or below the 1SD/2SD
     """
 
-    columns = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Current_STD_Error']
+    columns = constants.header
     qualified_df = pd.DataFrame(columns=columns)
     sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
     keys = data.keys()
@@ -312,10 +317,10 @@ def LRegression_qualifiedPairs1(data, filename):
         print e
     pvalue_boolean = data.PValue < 0.02
     data = data[pvalue_boolean]
-    less2SD = (data['Current_STD_Error'] <= -2.0) & (data['Current_STD_Error'] >= -3.0) & (data['Beta'] > 0.0)
-    greater2SD = (data['Current_STD_Error'] >= 2.0) & (data['Current_STD_Error'] <= 3.0) & (data['Beta'] > 0.0)
-    less3SD = (data['Current_STD_Error'] <= -3.0) & (data['Beta'] > 0.0)
-    greater3SD = (data['Current_STD_Error'] >= 3.0) & (data['Beta'] > 0.0)
+    less2SD = (data['Close_STD_Error'] <= -2.0) & (data['Close_STD_Error'] >= -3.0) & (data['Beta'] > 0.0)
+    greater2SD = (data['Close_STD_Error'] >= 2.0) & (data['Close_STD_Error'] <= 3.0) & (data['Beta'] > 0.0)
+    less3SD = (data['Close_STD_Error'] <= -3.0) & (data['Beta'] > 0.0)
+    greater3SD = (data['Close_STD_Error'] >= 3.0) & (data['Beta'] > 0.0)
 
 
     frame_over2SD = data[greater2SD]
@@ -363,14 +368,19 @@ def model_current_std_err(data, YStock, XStock):
 
     try:
         #Get current quote for YStock
-        ystock_price = nsequoter.get_futures_quote(YStock, current_date.strftime("%b"))
+        ystock_price = nsequoter.get_equity_quote(YStock)
+        #ystock_price = nsequoter.get_futures_quote(YStock, current_date.strftime("%b"))
         #Get current quote for YStock
-        xstock_price = nsequoter.get_futures_quote(XStock, current_date.strftime("%b"))
+        xstock_price = nsequoter.get_equity_quote(XStock)
+        #xstock_price = nsequoter.get_futures_quote(XStock, current_date.strftime("%b"))
         current_data = pd.DataFrame([[0, 1], [ystock_price, xstock_price]], columns=columns)
-        print colored('Current %s futures price: %s' % (YStock, ystock_price), 'cyan')
-        print colored('Current %s futures price: %s' % (XStock, xstock_price), 'cyan')
+        print colored('Current %s stock price: %s' % (YStock, ystock_price), 'cyan')
+        print colored('Current %s stock price: %s' % (XStock, xstock_price), 'cyan')
+        #Create an NP array from dataframe column containing the stock price history
+        # Y and X stock
         Y = np.asarray(data[YStock])
         X = np.asarray(data[XStock])
+        # Append the current respective stock prices to the above arrays
         _y = np.append(Y, current_data.YStock)
         _x = np.append(X, current_data.XStock)
         model = linreg(Y=_y, X=_x)
