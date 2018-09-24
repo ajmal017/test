@@ -17,6 +17,7 @@ import pairTrader
 from os.path import expanduser
 import colorama
 import platform
+from statsmodels.tsa.stattools import coint
 
 colorama.init()
 #variables
@@ -147,7 +148,7 @@ def main():
 			print sTime
 			print eTime
 			print t_delta
-			data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
+			data = pairTrader.pullData(stockY=args['YStock'].upper(),stockX=args['XStock'].upper(),
 				 						future=args['future'], nifty=args['nifty'],
 									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
 			 							basket=basket, filename=directory_name+filename)
@@ -155,8 +156,8 @@ def main():
 			data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
 
 	if args['YStock'] and args['XStock']:
-		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
-		pairTrader.model_open_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
+		pairTrader.model_current_std_err(data, YStock=args['YStock'].upper(), XStock=args['XStock'].upper())
+		pairTrader.model_open_std_err(data, YStock=args['YStock'].upper(), XStock=args['XStock'].upper())
 		exit(0)
 
 	# Heatmap to show the p-values of the cointegration test
@@ -185,8 +186,8 @@ def main():
 	plt.show()
 	"""
 	"""
-	S1 = data['IDFCBANK']
-	S2 = data['KOTAKBANK']
+	S1 = data['BANKNIFTY']
+	S2 = data['RBLBANK']
 	score, pvalue, _ = coint(S1, S2)
 	print('PValue = ',pvalue)
 	ratios = S1 / S2
