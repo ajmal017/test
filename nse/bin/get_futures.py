@@ -36,7 +36,11 @@ class constants:
 
 	current_filename = directory_name + '../open_trades/current.csv'
 	
-	
+	niftyauto = ['AMARAJABAT','APOLLOTYRE','ASHOKLEY','BAJAJ-AUTO','BHARATFORG','BOSCHLTD','EICHERMOT','EXIDEIND',
+				  'HEROMOTOCO','MRF','M&M','MARUTI','MOTHERSUMI','TVSMOTOR','TATAMTRDVR','TATAMOTORS']
+	niftyit = ['HCLTECH', 'INFIBEAM', 'INFY', 'KPIT', 'MINDTREE', 'OFSS', 'TCS', 'TATAELXSI', 'TECHM', 'WIPRO']
+	niftymetal = ['APLAPOLLO', 'COALINDIA', 'HINDALCO', 'HINDCOPPER', 'HINDZINC', 'JSWSTEEL',
+			  'JSLHISAR', 'JINDALSTEL', 'MOIL', 'NMDC', 'NATIONALUM', 'SAIL', 'TATASTEEL', 'VEDL', 'WELCORP']
 	banknifty = ['BANKNIFTY','AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
 				 'IDFCBANK','INDUSINDBK','KOTAKBANK',
 				 'PNB','RBLBANK','SBIN','YESBANK']
@@ -87,20 +91,24 @@ def get_futures_data(ticker,start_day,end_day,expiry):
 
 def main():
 	parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
-	parser.add_argument('-s1', '--YStock', help='NSE first stock symbol', required=False)
-	parser.add_argument('-s2', '--XStock', help='NSE second stock symbol', required=False)
+	parser.add_argument('-y', '--YStock', help='NSE first stock symbol', required=False)
+	parser.add_argument('-x', '--XStock', help='NSE second stock symbol', required=False)
 	parser.add_argument('-d', '--delta', help='Start date', required=False, default=262)
 	parser.add_argument('-f', '--future', help='Flag for stock futures', required=False, action='store_true', default=False)
 	parser.add_argument('-I', '--nifty', help='Flag for NIFTY index', required=False, action='store_true', default=False)
 	parser.add_argument('-B', '--bnifty', help='Flag for BANK NIFTY index', required=False, action='store_true', default=False)
 	parser.add_argument('-U', '--US', help='Flag for US Futures', required=False, action='store_true',
 						default=False)
+	parser.add_argument('-A', '--niftyauto', help='Flag for Nifty Auto',required=False, action='store_true', default=False)
+	parser.add_argument('-M', '--niftymetal', help='Flag for Nifty Metals', required=False, action='store_true', default=False)
+	parser.add_argument('-IT', '--niftyit', help='Flag for Nifty IT', required=False, action='store_true', default=False)
 	args = vars(parser.parse_args())
 
 	# Initialize
 	eTime = datetime.date.today()
 	t_delta = datetime.timedelta(days=int(args['delta']))
 	sTime = eTime - t_delta
+
 
 
 	#print('Fetching Last %s days of data' % (args['delta']))
@@ -117,12 +125,23 @@ def main():
 	if args['nifty']:
 		name = 'nifty'
 		basket = constants.nifty50
-	if args['US']:
+	elif args['US']:
 		name = 'INDICES'
 		basket = constants.INDICES
-	else:
+	elif args['bnifty']:
 		name = 'banknifty'
 		basket = constants.banknifty
+	elif args['niftyauto']:
+		name = 'niftyauto'
+		basket = constants.niftyauto
+	elif args['niftymetal']:
+		name = 'niftymetal'
+		basket = constants.niftymetal
+	elif args['niftyit']:
+		name = 'niftyit'
+		basket = constants.niftyit
+	else:
+		raise Exception('Specify correct argument')
 
 	directory_name = constants.directory_name
 	try:
@@ -144,20 +163,21 @@ def main():
 		except Exception, e:
 			print e
 	else:
-		if args['nifty'] or args['bnifty']:
-			print sTime
-			print eTime
-			print t_delta
-			data = pairTrader.pullData(stockY=args['YStock'].upper(),stockX=args['XStock'].upper(),
-				 						future=args['future'], nifty=args['nifty'],
-									    bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
-			 							basket=basket, filename=directory_name+filename)
-		else:
-			data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
+		#if args['nifty'] or args['bnifty']:
+		print sTime
+		print eTime
+		print t_delta
+		data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
+									future=args['future'], nifty=args['nifty'],
+									bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
+									basket=basket, filename=directory_name+filename)
+		#Condition for US Futures
+		#else:
+		#	data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
 
 	if args['YStock'] and args['XStock']:
-		pairTrader.model_current_std_err(data, YStock=args['YStock'].upper(), XStock=args['XStock'].upper())
-		pairTrader.model_open_std_err(data, YStock=args['YStock'].upper(), XStock=args['XStock'].upper())
+		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
+		pairTrader.model_open_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
 		exit(0)
 
 	# Heatmap to show the p-values of the cointegration test

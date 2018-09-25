@@ -306,7 +306,7 @@ def LRegression_qualifiedPairs1(data, filename):
 
     columns = constants.header
     qualified_df = pd.DataFrame(columns=columns)
-    sd_matrix = [-3.0,-2.0,-1.0,1.0,2.0,3.0]
+    sd_matrix = [-3.0,-2.5,-1.0,1.0,2.5,3.0]
     keys = data.keys()
     n = data.shape[1]
     print '## Trying to find pairs qualifying for a trade ##'
@@ -318,8 +318,8 @@ def LRegression_qualifiedPairs1(data, filename):
         print e
     pvalue_boolean = data.PValue < 0.02
     data = data[pvalue_boolean]
-    less2SD = (data['Close_STD_Error'] <= -2.0) & (data['Close_STD_Error'] >= -3.0) & (data['Beta'] > 0.0)
-    greater2SD = (data['Close_STD_Error'] >= 2.0) & (data['Close_STD_Error'] <= 3.0) & (data['Beta'] > 0.0)
+    less2SD = (data['Close_STD_Error'] <= -2.5) & (data['Close_STD_Error'] >= -3.0) & (data['Beta'] > 0.0)
+    greater2SD = (data['Close_STD_Error'] >= 2.5) & (data['Close_STD_Error'] <= 3.0) & (data['Beta'] > 0.0)
     less3SD = (data['Close_STD_Error'] <= -3.0) & (data['Beta'] > 0.0)
     greater3SD = (data['Close_STD_Error'] >= 3.0) & (data['Beta'] > 0.0)
 
