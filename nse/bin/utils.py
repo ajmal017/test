@@ -81,8 +81,8 @@ class Utils():
         for i in range(len(items)):
             self._codes[items[i][0]] = items[i][1]
 
-    # based on parameters, builsd the right url to be scraped and scrapes it
-    def get_quote(self, eq, cont='EQ', mon=_month):
+    # based on parameters, build the right url to be scraped and scrapes it
+    def get_quote(self, eq, cont='EQ', mon=_month,search_string='lastPrice'):
 
         eq = eq.upper()
         if eq not in self._codes:
@@ -122,7 +122,55 @@ class Utils():
         else:
             raise Exception('Facility not available yet!')
 
-        pattern = r'"lastPrice":"(\d*,?\d*\.\d*)"'
+        pattern = r'"%s":"(\d*,?\d*\.\d*)"' %search_string
+        r = self._get_page_or_exception(url)
+        match = re.findall(pattern, r.text)
+        quote = match[0].replace(',', '')
+        return float(quote)
+
+    def get_open(self, eq, cont='EQ', mon=_month):
+
+        eq = eq.upper()
+        if eq not in self._codes:
+            raise Exception('Invalid Symbol/Code!')
+
+        if cont == 'EQ':
+            url = self._base_url + eq.upper()
+
+        elif cont == 'FUTSTK':
+            if type(mon) == int:
+                mon == self._months[mon - 1]
+            else:
+                mon = mon.upper()
+            if ((self._months.index(mon) + 1) > ((self._month + 2) % 12)) or (
+                (self._months.index(mon) + 1) < self._month):
+                raise Exception('Contract not available!')
+            y = self._year
+            if (self._month == 'DEC') and (mon == 'JAN' or 'FEB'): y += 1
+            d = self._get_last_thursday(y, (self._months.index(mon) + 1))
+            if self._date > d:
+                raise Exception('Contract Expired!')
+            url = self._FO_url + eq + '&instrument=FUTSTK&expiry=' + str(d) + mon + str(y)
+        elif cont == 'FUTIDX':
+            if type(mon) == int:
+                mon == self._months[mon - 1]
+            else:
+                mon = mon.upper()
+                print mon
+            if ((self._months.index(mon) + 1) > ((self._month + 2) % 12)) or (
+                (self._months.index(mon) + 1) < self._month):
+                raise Exception('Contract not available!')
+            y = self._year
+            if (self._month == 'DEC') and (mon == 'JAN' or 'FEB'): y += 1
+            d = self._get_last_thursday(y, (self._months.index(mon) + 1))
+            if self._date > d:
+                raise Exception('Contract Expired!')
+            url = self._FO_url + eq + '&instrument=FUTIDX&expiry=' + str(d) + mon + str(y)
+            print url
+        else:
+            raise Exception('Facility not available yet!')
+
+        pattern = r'"open":"(\d*,?\d*\.\d*)"'
         r = self._get_page_or_exception(url)
         match = re.findall(pattern, r.text)
         quote = match[0].replace(',', '')

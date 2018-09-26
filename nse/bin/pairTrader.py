@@ -110,6 +110,34 @@ def pullData(stockY=None, stockX=None, future=False, nifty=False, bnifty=False, 
 
     return data
 
+def pullindex(stockY=None, stockX=None, future=False, nifty=False, bnifty=False, sTime=None, eTime=None, basket=None
+             , filename=None):
+    if not basket:
+        print 'Invalid Stock basket provided'
+        exit(0)
+
+    # merge = pd.DataFrame(columns=['Date'])
+    first_stock = nsepy.get_history(symbol=basket[0].upper(), start=sTime, end=eTime,index=True)
+
+    for i in range(1, len(basket)):
+        dfstock = nsepy.get_history(symbol=basket[i], start=sTime, end=eTime, index=True)
+
+        if i == 1:
+            data = pd.concat([first_stock['Close'].rename(basket[0]),
+                              dfstock['Close'].rename(basket[i])],
+                             axis=1)
+        else:
+            data = pd.concat([data, dfstock['Close'].rename(basket[i])],
+                             axis=1)
+
+    # Set Date as index
+    # data.set_index('Date', inplace=True)
+    data.replace([np.inf, -np.inf], np.nan).dropna()
+    data.sort_values(by=['Date'], ascending=False)
+    create_file_from_df(fName=filename, df=data)
+
+    return data
+
 
 def linreg(Y, X):
     # Running the linear regression
@@ -360,19 +388,30 @@ def LRegression_qualifiedPairs1(data, filename):
 
     return None
 
-def model_current_std_err(data, YStock, XStock):
+def model_current_std_err(data, YStock, XStock,search_string='lastPrice'):
 
     columns = ['YStock', 'XStock']
+
+    u = utils.Utils()
+    u._codes['NIFTY']='Nifty Index'
+    u._codes['BANKNIFTY'] = 'Bank Nifty Index'
+
     #Get current date
     current_date = datetime.date.today()
     #current_data = pd.read_csv(constants.current_filename,names=columns)
 
     try:
         #Get current quote for YStock
-        ystock_price = nsequoter.get_equity_quote(YStock)
+        if YStock in constants.index:
+            ystock_price = u.get_quote(YStock, cont='FUTIDX',mon=constants.expiry_month,search_string=search_string)
+        else:
+            ystock_price = nsequoter.get_equity_quote(YStock)
         #ystock_price = nsequoter.get_futures_quote(YStock, current_date.strftime("%b"))
         #Get current quote for YStock
-        xstock_price = nsequoter.get_equity_quote(XStock)
+        if XStock in constants.index:
+            xstock_price = u.get_quote(XStock, cont='FUTIDX', mon=constants.expiry_month,search_string=search_string)
+        else:
+            xstock_price = nsequoter.get_equity_quote(XStock)
         #xstock_price = nsequoter.get_futures_quote(XStock, current_date.strftime("%b"))
         current_data = pd.DataFrame([[0, 1], [ystock_price, xstock_price]], columns=columns)
         print colored('Current %s stock price: %s' % (YStock, ystock_price), 'cyan')
@@ -388,7 +427,7 @@ def model_current_std_err(data, YStock, XStock):
         print colored('Model\'s current std error: %s\n' % get_current_std_err(model), 'yellow')
 
     except Exception,e:
-        print colored('Unable to fetch current futures price','red')
+        print colored('Unable to fetch %s futures price' % search_string,'red')
         print e
     #print colored('Successfully read file: %s' % constants.current_filename,'cyan')
     pass
@@ -398,9 +437,16 @@ def model_open_std_err(data, YStock, XStock):
     try:
         u = utils.Utils()
         #Get current quote for YStock
-        ystock_open = u.get_open(YStock)
+
+        if YStock in constants.index:
+            ystock_open = u.get_open(YStock, cont='FUTIDX',mon=constants.expiry_month)
+        else:
+            ystock_open = u.get_open(YStock)
         #Get current quote for YStock
-        xstock_open = u.get_open(XStock)
+        if XStock in constants.index:
+            xstock_open = u.get_open(XStock, cont='FUTIDX', mon=constants.expiry_month)
+        else:
+            xstock_open = u.get_open(XStock)
         current_data = pd.DataFrame([[0, 1], [ystock_open, xstock_open]], columns=columns)
         print colored('Open %s stock price: %s' % (YStock, ystock_open), 'cyan')
         print colored('Open %s stock price: %s' % (XStock, xstock_open), 'cyan')

@@ -28,14 +28,16 @@ class constants:
 	start_day = '2018,08,01'
 	end_day = '2018,08,31'
 	expiry_date = datetime.date(2018, 9, 27)
-
+	expiry_month = 'Sep'
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
 	location = script_dir + '/../../data/'
 	directory_name = location + timestr + '/'
 
 	current_filename = directory_name + '../open_trades/current.csv'
-	
+
+	index=['NIFTY','BANKNIFTY']
+
 	niftyauto = ['AMARAJABAT','APOLLOTYRE','ASHOKLEY','BAJAJ-AUTO','BHARATFORG','BOSCHLTD','EICHERMOT','EXIDEIND',
 				  'HEROMOTOCO','MRF','M&M','MARUTI','MOTHERSUMI','TVSMOTOR','TATAMTRDVR','TATAMOTORS']
 	niftyit = ['HCLTECH', 'INFIBEAM', 'INFY', 'KPIT', 'MINDTREE', 'OFSS', 'TCS', 'TATAELXSI', 'TECHM', 'WIPRO']
@@ -102,6 +104,7 @@ def main():
 	parser.add_argument('-A', '--niftyauto', help='Flag for Nifty Auto',required=False, action='store_true', default=False)
 	parser.add_argument('-M', '--niftymetal', help='Flag for Nifty Metals', required=False, action='store_true', default=False)
 	parser.add_argument('-IT', '--niftyit', help='Flag for Nifty IT', required=False, action='store_true', default=False)
+	parser.add_argument('-index', help='Flag for Index', required=False, action='store_true', default=False)
 	args = vars(parser.parse_args())
 
 	# Initialize
@@ -140,12 +143,14 @@ def main():
 	elif args['niftyit']:
 		name = 'niftyit'
 		basket = constants.niftyit
+	elif args['index']:
+		name = 'index'
+		basket = constants.index
 	else:
 		raise Exception('Specify correct argument')
 
 	directory_name = constants.directory_name
 	try:
-
 		if not os.path.isdir(directory_name):
 			os.makedirs(directory_name)
 	except Exception,e:
@@ -167,7 +172,11 @@ def main():
 		print sTime
 		print eTime
 		print t_delta
-		data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
+		if args['index']:
+			data = pairTrader.pullindex(basket=basket, filename=directory_name+filename, sTime=sTime,
+										eTime=eTime)
+		else:
+			data = pairTrader.pullData(stockY=args['YStock'],stockX=args['XStock'],
 									future=args['future'], nifty=args['nifty'],
 									bnifty=args['bnifty'],sTime=sTime,eTime=eTime,
 									basket=basket, filename=directory_name+filename)
@@ -176,8 +185,9 @@ def main():
 		#	data = pairTrader.usfutures(basket=basket, filename=directory_name+filename)
 
 	if args['YStock'] and args['XStock']:
-		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
-		pairTrader.model_open_std_err(data, YStock=args['YStock'], XStock=args['XStock'])
+		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'],search_string='lastPrice')
+		pairTrader.model_current_std_err(data, YStock=args['YStock'], XStock=args['XStock'],search_string='open')
+
 		exit(0)
 
 	# Heatmap to show the p-values of the cointegration test
