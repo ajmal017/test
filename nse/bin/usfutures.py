@@ -85,26 +85,30 @@ def pulldata(delta):
     _dict = {}
     expiry_series = pd.Series
 
-    first_contract = quandl.get("CHRIS/%s" % const.futures[0],authtoken="3v1zXUSUxysjyohgAQ3e",start_date=sTime, end_date=eTime)
+    first_contract = quandl.get("CHRIS/%s" % const.futures[0],authtoken="3v1zXUSUxysjyohgAQ3e", start_date=sTime, end_date=eTime)
+    print 'Downloading: %s' % const.futures[0]
+    print 'Entering Loop'
     first_contract.name = const.futures[0]
+
     for i in range(1,len(const.futures)):
         # Scratch Variable
         list_of_df = []
         print 'Futures:', const.futures[i]
         contract_name = const.futures[i]
         print 'Downloading: %s' % contract_name
-        data = quandl.get("CHRIS/%s" % contract_name, authtoken="3v1zXUSUxysjyohgAQ3e",start_date=sTime, end_date=eTime)
+        data = quandl.get("CHRIS/%s" % contract_name, authtoken="3v1zXUSUxysjyohgAQ3e", start_date=sTime, end_date=eTime)
         data.name = contract_name
-        list_of_df.append(data)
-        tocsv(data)
+        #list_of_df.append(data)
+        tocsv(data=data, name=data.name)
 
         if i == 1:
-            running_df = pd.concat([list_of_df[0].Settle.rename(const.futures[0]),
+            running_df = pd.concat([first_contract.Settle.rename(const.futures[0]),
                                     data.Settle.rename(contract_name)], axis=1)
+
         else:
             running_df = pd.concat([running_df, data.Settle.rename(contract_name)], axis=1)
-
     # Output the merged series of contract settle prices
+    running_df.dropna()
     tocsv(data=running_df, name='MERGED')
     return running_df
 
@@ -168,14 +172,18 @@ def tocsv(data,name=None):
 
 def main():
     parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
-    parser.add_argument('-d', '--delta', help='No. of days of history to pull', required=False, default=300)
+    parser.add_argument('-d', '--delta', help='No. of days of history to pull', required=False, default=462)
     args = vars(parser.parse_args())
 
 
     data = pulldata(delta=args['delta'])
+    print data.head()
+    print data.tail()
     filename = '%s_%s.csv' % ('usfutures', const.timestr)
+    print filename
     #convert_to_continuous(delta = args['delta'])
     #merge_basket_frames(basket=const.futures)
+
     # Run Linear regression on all the possible pairs in basket and create a csv file
     _name = pairTrader.LRegression_allPairs(data, filename)
     # Filter the above csv file and only show qualifying trades

@@ -174,9 +174,13 @@ def get_beta(model):
     #Beta
     return '%.2f' %model.params[1]
 def get_pvalue(model):
-    return '%.2f' % model.f_pvalue
+    return '%.4f' % model.f_pvalue
 def get_current_std_err(model):
     return '%.2f' %(model.resid[-1] / get_std_err(model))
+def get_alpha_price_ratio(model, price):
+    #Return the Alpha : Price ratio
+    alpha = get_alpha(model)
+    return 100 * float(alpha)/float(price) 
 
 def print_model_info(model):
     print model.summary()
@@ -211,7 +215,7 @@ def find_cointegrated_pairs(data, pfilter):
     #return_list = [score_matrix, pvalue_matrix, pairs]
     return score_matrix, pvalue_matrix, pairs
 
-def set_values(model, Y, X):
+def set_values(model, Y, X, df):
     ## Create an empty dataframe and then insert the model values to it
     ## Returns True on successfull work
 
@@ -223,7 +227,8 @@ def set_values(model, Y, X):
     rows_list.append('%.2f' % get_std_err_ratio(model))
     rows_list.append(get_alpha(model))
     rows_list.append(get_current_std_err(model))
-
+    rows_list.append(get_alpha_price_ratio(model, df[Y].iat[-1]))
+    #rows_list.append(df[Y].iat[-1])
 
     """
     running_df.YStock = Y
@@ -252,6 +257,10 @@ def LRegression_allPairs(data, filename):
     n = data.shape[1]
     keys = data.keys()
 
+    #Loop through the merged dataframe and run LRegression on each pair
+    # First A as Y and B as X, then A as X and B as Y
+    # Pick only the pair series which has std_err_ratio least between the two combinations
+    #Create the CSV file allPairs_<filename>.csv
     for i in range(n):
         for j in range(i+1,n):
             Y = np.asarray(data[keys[i]])
@@ -261,10 +270,10 @@ def LRegression_allPairs(data, filename):
 
             if get_std_err_ratio(model) < get_std_err_ratio(inverse_model):
                 #print '\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j])
-                running_df.loc[len(running_df)] = set_values(model, Y=keys[i], X=keys[j])
+                running_df.loc[len(running_df)] = set_values(model, Y=keys[i], X=keys[j], df=data)
             else:
                 #print '\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i])
-                running_df.loc[len(running_df)] = set_values(inverse_model, Y=keys[j], X=keys[i])
+                running_df.loc[len(running_df)] = set_values(inverse_model, Y=keys[j], X=keys[i], df=data)
 
     name = directory_name+'allPairs_'+filename
     running_df.to_csv(name)
@@ -384,7 +393,6 @@ def LRegression_qualifiedPairs1(data, filename):
         frame_less3SD.to_csv(name)
         print colored(frame_less3SD, 'green')
         print colored('Created qualified pair trader file: %s\n' % name,'blue')
-
 
     return None
 

@@ -18,6 +18,7 @@ from os.path import expanduser
 import colorama
 import platform
 from statsmodels.tsa.stattools import coint
+import logging
 
 colorama.init()
 #variables
@@ -32,6 +33,7 @@ class constants:
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
 	location = script_dir + '/../../data/'
+	log_location = location + 'log/'
 	directory_name = location + timestr + '/'
 
 	current_filename = directory_name + '../open_trades/current.csv'
@@ -62,7 +64,7 @@ class constants:
 	bnifty_lotsize = {'AXISBANK':1200, 'BANKBARODA': 4000,'HDFCBANK':500,'ICICIBANK':2750,
 					  'IDFCBANK':11000,'INDUSINDBK':300,'KOTAKBANK': 800,'PNB':5500,'RBLBANK':1200,
 					  'SBIN':3000,'YESBANK':1750,'BANKNIFTY':40}
-	header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Close_STD_Error']
+	header = ['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Close_STD_Error', 'Alpha:YPrice']
 
 
 def get_stock_data(ticker, start_day, end_day, expiry=None):
@@ -105,6 +107,7 @@ def main():
 	parser.add_argument('-M', '--niftymetal', help='Flag for Nifty Metals', required=False, action='store_true', default=False)
 	parser.add_argument('-IT', '--niftyit', help='Flag for Nifty IT', required=False, action='store_true', default=False)
 	parser.add_argument('-index', help='Flag for Index', required=False, action='store_true', default=False)
+	parser.add_argument('-del',help='Delete Flag', required=False, action='store_true', default=False)
 	args = vars(parser.parse_args())
 
 	# Initialize
@@ -112,9 +115,28 @@ def main():
 	t_delta = datetime.timedelta(days=int(args['delta']))
 	sTime = eTime - t_delta
 
+    #Initialize Logging
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.INFO)
 
+	# create a file handler
+	_dir = constants.log_location+constants.timestr
+	logname = _dir + '/'+constants.timestr+'.log'
+	if not os.path.isdir(_dir):
+		os.makedirs(_dir)
+	#raise exception('Error in creating directory: %s' %(constants.log_location+constants.timestr))
+	handler = logging.FileHandler(logname)
+	handler.setLevel(logging.INFO)
 
-	#print('Fetching Last %s days of data' % (args['delta']))
+	# create a logging format
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	handler.setFormatter(formatter)
+
+	# add the handlers to the logger
+	logger.addHandler(handler)
+
+	logger.info("Running Linear Regression")
+	logger.info('Fetching Last %s days of data' % (args['delta']))
 
 	if args['YStock']:
 		if not args['future']:
@@ -150,6 +172,7 @@ def main():
 		raise Exception('Specify correct argument')
 
 	directory_name = constants.directory_name
+	#Create directory if doesn't exist
 	try:
 		if not os.path.isdir(directory_name):
 			os.makedirs(directory_name)
@@ -158,8 +181,15 @@ def main():
 
 	filename = '%s_%s.csv' % (name,constants.timestr)
 
+	try:
+		if args['del']:
+			os.remove(directory_name + filename)
+	except Exception,e:
+		print e
+
 	if os.path.isfile(directory_name+filename):
 		print 'Data already downloaded in file: %s' %(directory_name+filename)
+
 		try:
 			data = pd.read_csv(directory_name+filename,comment='"')
 			#Set Date as index
