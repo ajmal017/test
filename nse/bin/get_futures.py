@@ -28,7 +28,7 @@ class constants:
 	back_expiry = '2018,10,25'
 	start_day = '2018,08,01'
 	end_day = '2018,08,31'
-	expiry_date = datetime.date(2018, 9, 27)
+	expiry_date = datetime.date(2018, 10, 25)
 	expiry_month = 'Sep'
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
