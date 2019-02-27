@@ -2,13 +2,24 @@ import sys
 import pandas as pd
 import datetime
 import numpy as np
-from pandas_datareader import data, wb
-import pandas_datareader as pdr
 from collections import defaultdict
 
 
-def Print_Market_Profile(symbol, height_precision=1,
-                         frequency='m', start_date=None, end_date=None):
+def get_data_from_pi():
+    # Read CSV file downloaded from Pi
+    directory_name = "C:\\Users\\abhi\\Downloads\\"
+    filename = "NIFTY19FEBFUT.csv"
+    header=['Date','Open','High','Low','Close','Volume']
+    data = pd.read_csv(directory_name + filename, skiprows=1, names=header, delimiter=',')
+    # Set Date as index
+    #data.set_index('Date', inplace=True)
+    data.sort_values(by=['Date'], ascending=False)
+
+    return data
+
+
+def Print_Market_Profile(symbol="GLD", height_precision=1,
+                         frequency='d', start_date=None, end_date=None):
     # We will look at stock prices over the past year
     if start_date == None:
         # get a year's worth of data from today
@@ -18,12 +29,17 @@ def Print_Market_Profile(symbol, height_precision=1,
     if end_date == None:
         end_date = datetime.date.today()
 
-    fin_prod_data = pdr.get_data_google(symbol.upper(), start_date, end_date)
+    #fin_prod_data = pdr.get_data_google(symbol.upper(), start_date, end_date)
+    fin_prod_data = get_data_from_pi()
+    print fin_prod_data.head()
     fin_prod_data[('High')] = fin_prod_data[('High')] * height_precision
     fin_prod_data[('Low')] = fin_prod_data[('Low')] * height_precision
     fin_prod_data = fin_prod_data.round({'Low': 0, 'High': 0})
 
-    time_groups = fin_prod_data.groupby(pd.TimeGrouper(freq=frequency))['Adj Close'].mean()
+    fin_prod_data.Date = pd.to_datetime(fin_prod_data.Date, format='%m/%d/%Y %H:%M')
+    print fin_prod_data.Date
+
+    time_groups = fin_prod_data.groupby(pd.Grouper(freq=frequency))['Date'].mean()
     current_time_group_index = 0
 
     from collections import defaultdict
@@ -68,7 +84,7 @@ def main():
     # customize ingestion of agruments to handle
     # frequency: http://nullege.com/codes/search/pandas.TimeGrouper
 
-    if (len(sys.argv[1:]) == 1):
+    """if (len(sys.argv[1:]) == 1):
         symbol = sys.argv[1:][0]
         Print_Market_Profile(symbol)
     elif (len(sys.argv[1:]) == 2):
@@ -79,7 +95,8 @@ def main():
         symbol = sys.argv[1:][0]
         height_precision = float(sys.argv[1:][1])
         frequency = sys.argv[1:][2]
-        Print_Market_Profile(symbol, height_precision, frequency)
+    """
+    Print_Market_Profile()
 
 
 if __name__ == "__main__":
