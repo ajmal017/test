@@ -1,0 +1,11 @@
+nsepy
+seaborn
+logging
+statsmodels
+nsequoter
+lxml
+datetime
+pandas
+numpy
+matplotlib
+scikit-learn

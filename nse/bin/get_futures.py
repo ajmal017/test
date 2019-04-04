@@ -15,21 +15,19 @@ import seaborn
 import matplotlib.pyplot as plt
 import pairTrader
 from os.path import expanduser
-import colorama
 import platform
 from statsmodels.tsa.stattools import coint
 import logging
 
-colorama.init()
 #variables
 class constants:
 	pfilter = 0.02
-	front_expiry = '2018,09,27'
-	back_expiry = '2018,10,25'
+	front_expiry = '2019,04,25'
+	back_expiry = '2019,05,30'
 	start_day = '2018,08,01'
-	end_day = '2018,08,31'
-	expiry_date = datetime.date(2018, 10, 25)
-	expiry_month = 'Sep'
+	end_day = '2019,04,04'
+	expiry_date = datetime.date(2019,04,25)
+	expiry_month = 'Apr'
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
 	location = script_dir + '/../../data/'
@@ -45,12 +43,9 @@ class constants:
 	niftyit = ['HCLTECH', 'INFIBEAM', 'INFY', 'KPIT', 'MINDTREE', 'OFSS', 'TCS', 'TATAELXSI', 'TECHM', 'WIPRO']
 	niftymetal = ['APLAPOLLO', 'COALINDIA', 'HINDALCO', 'HINDCOPPER', 'HINDZINC', 'JSWSTEEL',
 			  'JSLHISAR', 'JINDALSTEL', 'MOIL', 'NMDC', 'NATIONALUM', 'SAIL', 'TATASTEEL', 'VEDL', 'WELCORP']
-	#banknifty = ['BANKNIFTY','AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
-				 #'IDFCBANK','INDUSINDBK','KOTAKBANK',
-				 #'PNB','RBLBANK','SBIN','YESBANK']
-	banknifty = ['AXISBANK', 'BANKBARODA', 'HDFCBANK', 'ICICIBANK',
-				 'IDFCBANK', 'INDUSINDBK', 'KOTAKBANK',
-				 'PNB', 'SBIN']
+	banknifty = ['BANKNIFTY','AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
+				 'INDUSINDBK','KOTAKBANK',
+				 'PNB','RBLBANK','SBIN','YESBANK']
 	nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
 	'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
 	'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
