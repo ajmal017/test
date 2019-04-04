@@ -1,0 +1,8 @@
+nsepy
+seaborn
+logging
+datetime
+pandas
+numpy
+matplotlib
+scikit-learn

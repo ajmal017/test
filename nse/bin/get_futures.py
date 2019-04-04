@@ -24,12 +24,12 @@ colorama.init()
 #variables
 class constants:
 	pfilter = 0.02
-	front_expiry = '2018,09,27'
-	back_expiry = '2018,10,25'
+	front_expiry = '2019,04,25'
+	back_expiry = '2019,05,30'
 	start_day = '2018,08,01'
-	end_day = '2018,08,31'
-	expiry_date = datetime.date(2018, 10, 25)
-	expiry_month = 'Sep'
+	end_day = '2019,04,04'
+	expiry_date = datetime.date(2019,04,25)
+	expiry_month = 'Apr'
 	timestr = time.strftime("%Y%m%d")
 	script_dir = os.path.dirname(os.path.abspath(__file__))
 	location = script_dir + '/../../data/'
