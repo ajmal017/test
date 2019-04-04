@@ -15,12 +15,10 @@ import seaborn
 import matplotlib.pyplot as plt
 import pairTrader
 from os.path import expanduser
-import colorama
 import platform
 from statsmodels.tsa.stattools import coint
 import logging
 
-colorama.init()
 #variables
 class constants:
 	pfilter = 0.02
@@ -48,9 +46,7 @@ class constants:
 	#banknifty = ['BANKNIFTY','AXISBANK','BANKBARODA','HDFCBANK','ICICIBANK',
 				 #'IDFCBANK','INDUSINDBK','KOTAKBANK',
 				 #'PNB','RBLBANK','SBIN','YESBANK']
-	banknifty = ['AXISBANK', 'BANKBARODA', 'HDFCBANK', 'ICICIBANK',
-				 'IDFCBANK', 'INDUSINDBK', 'KOTAKBANK',
-				 'PNB', 'SBIN']
+	banknifty = ['AXISBANK', 'SBIN']
 	nifty50 = ['ACC','ADANIPORTS','AMBUJACEM','ASIANPAINT','AXISBANK','BAJAJ-AUTO','BANKBARODA',
 	'BHEL','BPCL','BHARTIARTL','BOSCHLTD','AUROPHARMA','CIPLA','COALINDIA','DRREDDY','GAIL','GRASIM',
 	'HCLTECH','HDFCBANK','HEROMOTOCO','HINDALCO','HINDUNILVR','HDFC','ITC','ICICIBANK','IDEA','INDUSINDBK','INFY',
