@@ -71,7 +71,7 @@ def get_spot_price(symbol, isIndex=True):
         return float(eval(soup.find("div", {"id": "responseDiv"}).getString().replace('null', 'None'))['data'][0][
                          'lastPrice'].replace(",", ""))
     except:
-        logging.debug("Check the site: " + str(site))
+        logging.debug("Check the site: " + str(future_site))
         raise
 
 
@@ -136,6 +136,6 @@ def get_option_data(symbol, location, isIndex=True):
 
 if __name__ == '__main__':
     #print get_spot_price("ICICIBANK", isIndex=False)
-    #print get_spot_price("NIFTY", isIndex=True)
+    print get_spot_price("NIFTY", isIndex=True)
     #get_option_data("ICICIBANK", 'C:/data', isIndex=False)
-    get_option_data("NIFTY", 'C:\\data', isIndex=True)
+    #get_option_data("NIFTY", 'C:\\Users\\abhi\\Documents\\', isIndex=True)

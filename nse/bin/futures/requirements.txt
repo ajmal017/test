@@ -1,0 +1,7 @@
+seaborn
+nsepy
+statsmodels
+patsy
+termcolor
+nsequoter
+lxml
