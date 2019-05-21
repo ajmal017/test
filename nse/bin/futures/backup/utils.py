@@ -4,11 +4,16 @@ Created on August 14
 author : @abhishek
 """
 import requests
-import urllib
 import sys, time, os
 import re
 import datetime
 import calendar
+import numpy as np
+from statsmodels import regression
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import math
+import pandas as pd
 
 #variables
 class constants:
@@ -74,17 +79,8 @@ class Utils():
     # getting the requested page to be scraped and raising exceptions when valid
     def _get_page_or_exception(self, url):
 
-        hdr = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-            'Accept-Encoding': 'none',
-            'Accept-Language': 'en-US,en;q=0.8',
-            'Connection': 'keep-alive'}
-        req = urllib.Request(url, headers=hdr)
         try:
-            r = urllib.urlopen(req)
-            #r = requests.get(url)
+            r = requests.get(url)
         except requests.exceptions.ConnectionError as e:
             print (e)
             sys.exit(1)
@@ -122,7 +118,7 @@ class Utils():
     def _build_codes_dict(self):
         url = 'https://www.nseindia.com/content/equities/EQUITY_L.csv'
         r = self._get_page_or_exception(url)
-        items = r.read().splitlines()
+        items = r.text.splitlines()
         for i in range(len(items)):
             items[i] = items[i].split(',')
         for i in range(len(items)):

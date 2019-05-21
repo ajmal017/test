@@ -5,3 +5,4 @@ patsy
 termcolor
 nsequoter
 lxml
+coloroma
