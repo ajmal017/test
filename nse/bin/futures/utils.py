@@ -4,7 +4,8 @@ Created on August 14
 author : @abhishek
 """
 import requests
-import urllib
+#import urllib.request
+#from urllib.request import urlopen
 import sys, time, os
 import re
 import datetime
@@ -81,10 +82,10 @@ class Utils():
             'Accept-Encoding': 'none',
             'Accept-Language': 'en-US,en;q=0.8',
             'Connection': 'keep-alive'}
-        req = urllib.Request(url, headers=hdr)
         try:
-            r = urllib.urlopen(req)
-            #r = requests.get(url)
+            #r = requests.get(url, headers=hdr)
+            r = urllib.request.Request(url, headers=hdr)
+            content = urllib.request.urlopen(r).read()
         except requests.exceptions.ConnectionError as e:
             print (e)
             sys.exit(1)
@@ -94,9 +95,10 @@ class Utils():
         except requests.exceptions.RequestException as e:
             print (e)
             sys.exit(1)
-        if r.status_code != 200:
-            r.raise_for_status()
-        return r
+        #if r.status_code != 200:
+        #    r.raise_for_status()
+        return content
+        #return r
 
     # for equity derivatives
     def _get_last_thursday(self, y, mon):
@@ -122,7 +124,7 @@ class Utils():
     def _build_codes_dict(self):
         url = 'https://www.nseindia.com/content/equities/EQUITY_L.csv'
         r = self._get_page_or_exception(url)
-        items = r.read().splitlines()
+        items = r.splitlines()
         for i in range(len(items)):
             items[i] = items[i].split(',')
         for i in range(len(items)):

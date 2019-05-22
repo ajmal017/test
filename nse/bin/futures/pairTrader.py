@@ -11,7 +11,7 @@ import os, sys
 from utils import constants
 from termcolor import colored
 import datetime
-import nsequoter
+#import nsequoter
 import utils
 #from colorama import init
 #init()
@@ -94,6 +94,21 @@ class pull():
             print('Invalid Stock basket provided')
             exit(0)
 
+    def create_file_from_df(self, fName, df):
+        """
+        Create a csv file from dataframe
+        :param fName: Filename
+        :param df: dataframe
+        :return: None
+        """
+        try:
+            df.to_csv('%s' % fName)
+        except Exception as e:
+            print(e)
+        print('Created CSV Data file : %s' % fName)
+        return None
+
+
     def pullData(self):
         """
         :return: Dataframe
@@ -121,10 +136,10 @@ class pull():
 
         data.replace([np.inf, -np.inf], np.nan).dropna()
         data.sort_index(inplace=True, ascending=True)
-        print(data.head())
         #data.sort_values(by=['Date'], ascending=False)
+
         #Create CSV from dataframe
-        create_file_from_df(fName=self.filename, df=data)
+        self.create_file_from_df(fName=self.filename, df=data)
 
         return data
 
@@ -294,7 +309,6 @@ class pairTrader():
         qualified_df = pd.DataFrame(columns=columns)
         #qualified_df = pd.DataFrame(columns=columns)
         data = self.data.dropna()
-        print(data.head())
         n = data.shape[1]
         keys = data.keys()
 
@@ -310,10 +324,10 @@ class pairTrader():
                 inverse_model = self.linreg(y=X, x=Y)
 
                 if self.get_std_err_ratio(model) < self.get_std_err_ratio(inverse_model):
-                    print('\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j]))
+                    #print('\tChoosing YStock : %s XStock: %s' % (keys[i],keys[j]))
                     qualified_df.loc[len(qualified_df)] = self.set_values(model, Y=keys[i], X=keys[j], df=data)
                 else:
-                    print('\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i]))
+                    #print('\tChoosing YStock : %s XStock: %s' % (keys[j], keys[i]))
                     qualified_df.loc[len(qualified_df)] = self.set_values(inverse_model, Y=keys[j], X=keys[i], df=data)
 
         file_name = directory_name+'allPairs_'+self.filename

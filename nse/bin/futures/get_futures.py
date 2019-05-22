@@ -6,16 +6,13 @@
 
 import nsepy
 from datetime import date, datetime
-import time,os
-import numpy as np
+import time, os, sys
 import pandas as pd
 import argparse
 import datetime
 import seaborn
 import matplotlib.pyplot as plt
 import pairTrader
-from os.path import expanduser
-import platform
 from statsmodels.tsa.stattools import coint
 import logging
 import utils
@@ -72,6 +69,16 @@ def initialize_logging(args):
 
 	logger.info("Running Linear Regression")
 	logger.info('Fetching Last %s days of data' % (args['delta']))
+
+def delete_csv(fName):
+	try:
+		os.remove(fName)
+	except Exception as e:
+		print(e)
+		print("Could not delete %s" % fName)
+		return False
+
+	return True
 
 def main():
 	parser = argparse.ArgumentParser(description='Pairs strategy for stocks')
@@ -143,11 +150,9 @@ def main():
 
 	filename = '%s_%s.csv' % (name,_const.timestr)
 
-	try:
-		if args['del']:
-			os.remove(directory_name + filename)
-	except Exception as e:
-		print(e)
+	if args['del']:
+		if not delete_csv(directory_name+filename):
+			sys.exit(1)
 
 	_pull = pairTrader.pull(basket=basket, filename=directory_name+filename, sTime=sTime,
 										eTime=eTime, constants=_const)
@@ -155,10 +160,13 @@ def main():
 	if os.path.isfile(directory_name+filename):
 		print('Data already downloaded in file: %s' %(directory_name+filename))
 		try:
-			data = pd.read_csv(directory_name+filename,comment='"')
+			data = pd.read_csv(directory_name+filename, comment='"')
+			if data.empty:
+				if not delete_csv(directory_name+filename):
+					sys.exit(1)
 			#Set Date as index
 			data.set_index('Date', inplace=True)
-			data.sort_values(by=['Date'],ascending=False)
+			data.sort_values(by=['Date'], ascending=False)
 		except Exception as e:
 			print(e)
 	else:
@@ -185,9 +193,26 @@ def main():
 	else:
 		print '\nNo possible pair trades found in basket : %s as pvalue of all pairs is more than %s' %(basket, pfilter)
 	"""
+	"""
+	Dataframe should be in this format:
+	Frequency could be in D, M, Minute,15Minute
+					AXISBANK  BANKBARODA    SBIN
+	Date
+	2018-07-16    522.10      113.05  251.60
+	2018-07-17    537.90      120.80  259.05
+	2018-07-18    526.55      117.65  259.55
+	2018-07-19    526.80      120.05  260.20
+	2018-07-20    533.70      120.25  261.50
+	"""
+	start = time.time()
+	if data.empty:
+		print("Dataframe is empty. Nothing to do.")
+		delete_csv(directory_name+filename)
+		sys.exit(1)
 	if not pairTrader.LinearRegression_MODEL(data=data, filename=filename):
 		print('Unable to execute linear regression.')
-
+	end = time.time()
+	print(end-start)
 	""""#Seaborn Heatmap plot for pairs in the basket
 	m = [0,0.2,0.4,0.6,0.8,1]
 	seaborn.heatmap(pvalues, xticklabels=basket, yticklabels=basket,
