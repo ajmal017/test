@@ -1,7 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-import mibian
+from mibian import Me, BS
 import numpy as np
+import pandas as pd
+from PyQt4 import QtCore, QtGui
+import sys
 import datetime as dt
 
 # Constants
@@ -10,6 +13,9 @@ ir = 7.0
 lotsize = 75
 today = dt.datetime.now().date()
 end = dt.date(2019, 6, 27)
+
+Qt = QtCore.Qt
+
 
 def get_days_to_expiry(today, end):
     return np.busday_count(today, end)
@@ -170,34 +176,106 @@ def parse_chain(req_row, type=None):
 
     return bidqty_list
 
-def calculate_greeks(strike_list, call_iv_list, put_iv_list):
+def calculate_greeks(strike_list, call_iv_list, put_iv_list, algo='BS'):
     """
     Calculate the option greeks
     :param strike_list: List of Strike prices
     :param iv_list: List of Implied Volatility
     :return:
     """
-
     call_delta = []
     put_delta = []
 
-    for key, civ, piv in zip(strike_list, call_iv_list, put_iv_list):
-        print(key, civ, piv)
-    return call_delta, put_delta
+    if algo == 'ME':
+        for k,value in enumerate(strike_list):
+            call_delta.append(Me([spot, value, ir, dte], volatility=call_iv_list[k]).callDelta)
+            put_delta.append(Me([spot, value, ir, dte], volatility=put_iv_list[k]).putDelta)
+    else:
+        for k,value in enumerate(strike_list):
+            call_delta.append(BS([spot, value, ir, dte], volatility=call_iv_list[k]).callDelta)
+            put_delta.append(BS([spot, value, ir, dte], volatility=put_iv_list[k]).putDelta)
 
 
-spot = 11945
-symbol = 'NIFTY'
-dte = get_days_to_expiry(today, end)
-list_expiries = get_expiry_from_option_chain(symbol)
-req_row = get_req_row(symbol, expdate='27JUN2019')
-for type in mapper.keys():
-    pass
-    #print(type , parse_chain(req_row=req_row, type=type))
+    df = pd.DataFrame()
+    df['strikes'] = np.asarray(strike_list)
+    df['callDelta'] = np.asarray(call_delta)
+    df['putDelta'] = np.asarray(put_delta)
 
-print(calculate_greeks(parse_chain(req_row, type='strike'), parse_chain(req_row, 'ivC'), parse_chain(req_row, 'ivP')))
+    return df
 
 
+def get_itm_strikes(strike_list, option_type):
+    """
+    Get the ITM strikes for an list of strikes
+    :param strike_list: List of strike prices
+    :param option_type: Type of option (call or put)
+    :return: list
+    """
+    itm_list = []
+
+    if option_type == 'call':
+        itm_list = [i for i in strike_list if i <= spot]
+    if option_type == 'put':
+        itm_list = [i for i in strike_list if i >= spot]
+
+    return itm_list
+
+def get_otm_strikes(strike_list, option_type='call'):
+    """
+    Get the ITM strikes for an list of strikes
+    :param strike_list: List of strike prices
+    :param option_type: Type of option (call or put)
+    :return: list
+    """
+    otm_list = []
+    if option_type == 'call':
+        otm_list = [i for i in strike_list if i >= spot]
+    if option_type == 'put':
+        otm_list = [i for i in strike_list if i <= spot]
+
+    return otm_list
 
 
+class PandasModel(QtCore.QAbstractTableModel):
+    def __init__(self, data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+        self._data = data
 
+    def rowCount(self, parent=None):
+        return len(self._data.values)
+
+    def columnCount(self, parent=None):
+        return self._data.columns.size
+
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                return QtCore.QVariant(str(
+                    self._data.values[index.row()][index.column()]))
+        return QtCore.QVariant()
+
+
+if __name__ == '__main__':
+
+    spot = 11945
+    symbol = 'NIFTY'
+    dte = get_days_to_expiry(today, end)
+    list_expiries = get_expiry_from_option_chain(symbol)
+    req_row = get_req_row(symbol, expdate='27JUN2019')
+
+    strike_list = parse_chain(req_row, 'strike')
+    call_iv_list = parse_chain(req_row, 'ivC')
+    put_iv_list = parse_chain(req_row, 'ivP')
+    call_itm_strikes = get_itm_strikes(strike_list, 'call')
+    call_otm_strikes = get_otm_strikes(strike_list, 'call')
+    put_itm_strikes = get_itm_strikes(strike_list, 'put')
+    put_otm_strikes = get_otm_strikes(strike_list, 'put')
+    df = calculate_greeks(strike_list, call_iv_list, put_iv_list)
+
+    application = QtGui.QApplication(sys.argv)
+    view = QtGui.QTableView()
+    model = PandasModel(df)
+    view.setModel(model)
+
+    view.show()
+    sys.exit(application.exec_())
