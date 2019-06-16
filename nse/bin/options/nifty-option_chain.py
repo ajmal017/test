@@ -6,19 +6,101 @@ import pandas as pd
 from PyQt4 import QtCore, QtGui
 import sys
 import datetime as dt
+import matplotlib.pyplot as plt
+
+
 
 # Constants
 dir = "C:/Users/abhi/Documents/projects/test/nse/bin/options"
+spot = 11823.3
+symbol = 'NIFTY'
+
 ir = 7.0
 lotsize = 75
 today = dt.datetime.now().date()
 end = dt.date(2019, 6, 27)
+leg1_strike = 12200
+leg2_strike = 11400
+leg3_strike = None
+leg4_strike = None
+future_buy_price = -11980
+leg1_premium = 111.4
+leg2_premium = 125
+leg3_premium = 0.0
+leg4_premium = 0.0
+
+num_lots_futures = 1.0
+num_lots_leg1 = 5.0
+num_lots_leg2 = 3.0
 
 Qt = QtCore.Qt
 
 
 def get_days_to_expiry(today, end):
     return np.busday_count(today, end)
+
+
+def strangle_payoff(dataFrame):
+    """
+    Calculate the payoff
+    :param dataFrame: Input dataframe from option chain
+    :return: dataframe
+    """
+
+    dataFrame['Spot'] = np.repeat(spot, dataFrame.__len__())
+    dataFrame['leg1_intr_Value'] = np.maximum(dataFrame.strikes - leg1_strike, 0)
+    dataFrame['leg1_premium'] = np.repeat(leg1_premium, dataFrame.__len__())
+    if leg1_premium == 0.0:
+        dataFrame['leg1Payoff'] = 0
+    else:
+        dataFrame['leg1Payoff'] = num_lots_leg1 * (dataFrame['leg1_premium'] - dataFrame['leg1_intr_Value'])
+
+    dataFrame['leg2_intr_Value'] = np.maximum(leg2_strike - dataFrame.strikes, 0)
+    dataFrame['leg2_premium'] = np.repeat(leg2_premium, dataFrame.__len__())
+
+    if leg2_premium == 0.0:
+        dataFrame['leg2Payoff'] = 0
+    else:
+        dataFrame['leg2Payoff'] = num_lots_leg2 * (dataFrame['leg2_premium'] - dataFrame['leg2_intr_Value'])
+    dataFrame['Payoff'] = dataFrame['leg1Payoff'] + dataFrame['leg2Payoff']
+    return dataFrame
+
+def butterfly_payoff(dataFrame, strike1, strike1premium, strike2,
+                     strike2premium, strike3=None, strike3premium=None,
+                     strike4=None, strike4premium=None, type='call'):
+    """
+    Calculate the payoff
+    :param dataFrame: Input dataframe from option chain
+    :return: dataframe
+    """
+
+    dataFrame['Spot'] = np.repeat(spot, dataFrame.__len__())
+    if type == 'put':
+        dataFrame['leg1_intr_Value'] = np.maximum(strike1 - dataFrame.strikes, 0)
+        dataFrame['leg2_intr_Value'] = np.maximum(strike2 - dataFrame.strikes, 0)
+        dataFrame['leg3_intr_Value'] = np.maximum(strike3 if strike3 else 0.0 - dataFrame.strikes, 0)
+        dataFrame['leg4_intr_Value'] = np.maximum(strike4 if strike4 else 0.0 - dataFrame.strikes, 0)
+    if type == 'call':
+        dataFrame['leg2_intr_Value'] = np.maximum(dataFrame.strikes - strike2, 0)
+        dataFrame['leg1_intr_Value'] = np.maximum(dataFrame.strikes - strike1, 0)
+
+    dataFrame['leg1_premium'] = np.repeat(strike1premium if strike1premium else 0.0, dataFrame.__len__())
+    dataFrame['leg2_premium'] = np.repeat(strike2premium if strike2premium else 0.0, dataFrame.__len__())
+    dataFrame['leg3_premium'] = np.repeat(strike3premium if strike3premium else 0.0, dataFrame.__len__())
+    dataFrame['leg4_premium'] = np.repeat(strike4premium if strike4premium else 0.0, dataFrame.__len__())
+
+    if leg1_premium == 0.0:
+        dataFrame['leg1Payoff'] = 0
+    else:
+        dataFrame['leg1Payoff'] = num_lots_leg1 * (dataFrame['leg1_premium'] - dataFrame['leg1_intr_Value'])
+
+
+    if leg2_premium == 0.0:
+        dataFrame['leg2Payoff'] = 0
+    else:
+        dataFrame['leg2Payoff'] = num_lots_leg2 * (dataFrame['leg2_premium'] - dataFrame['leg2_intr_Value'])
+    dataFrame['Payoff'] = dataFrame['leg1Payoff'] + dataFrame['leg2Payoff']
+    return dataFrame
 
 
 # Get all get possible expiry date details for the given script
@@ -184,22 +266,38 @@ def calculate_greeks(strike_list, call_iv_list, put_iv_list, algo='BS'):
     :return:
     """
     call_delta = []
+    call_theta = []
     put_delta = []
+    put_theta = []
+    vega = []
+    gamma = []
+
+    df = pd.DataFrame()
 
     if algo == 'ME':
         for k,value in enumerate(strike_list):
+            call_theta.append(Me([spot, value, ir, dte], volatility=call_iv_list[k]).callTheta)
             call_delta.append(Me([spot, value, ir, dte], volatility=call_iv_list[k]).callDelta)
             put_delta.append(Me([spot, value, ir, dte], volatility=put_iv_list[k]).putDelta)
+            put_theta.append(Me([spot, value, ir, dte], volatility=put_iv_list[k]).putTheta)
+
     else:
         for k,value in enumerate(strike_list):
+            call_theta.append(BS([spot, value, ir, dte], volatility=call_iv_list[k]).callTheta)
             call_delta.append(BS([spot, value, ir, dte], volatility=call_iv_list[k]).callDelta)
             put_delta.append(BS([spot, value, ir, dte], volatility=put_iv_list[k]).putDelta)
+            put_theta.append(BS([spot, value, ir, dte], volatility=put_iv_list[k]).putTheta)
 
 
-    df = pd.DataFrame()
     df['strikes'] = np.asarray(strike_list)
     df['callDelta'] = np.asarray(call_delta)
+    df['callTheta'] = np.asarray(call_theta)
+    df['IV_Call'] = np.asarray(call_iv_list)
+    df['LTP_Call'] = np.asarray(call_ltp)
     df['putDelta'] = np.asarray(put_delta)
+    df['putTheta'] = np.asarray(put_theta)
+    df['IV_Put'] = np.asarray(put_iv_list)
+    df['LTP_Put'] = np.asarray(put_ltp)
 
     return df
 
@@ -236,7 +334,7 @@ def get_otm_strikes(strike_list, option_type='call'):
     return otm_list
 
 
-class PandasModel(QtCore.QAbstractTableModel):
+class _PandasModel(QtCore.QAbstractTableModel):
     def __init__(self, data, parent=None):
         QtCore.QAbstractTableModel.__init__(self, parent)
         self._data = data
@@ -254,11 +352,56 @@ class PandasModel(QtCore.QAbstractTableModel):
                     self._data.values[index.row()][index.column()]))
         return QtCore.QVariant()
 
+class PandasModel(QtCore.QAbstractTableModel):
+    """
+    Class to populate a table view with a pandas dataframe
+    """
+    def __init__(self, data, parent=None):
+        QtCore.QAbstractTableModel.__init__(self, parent)
+        self._data = data
+
+    def rowCount(self, parent=None):
+        return len(self._data.values)
+
+    def columnCount(self, parent=None):
+        return self._data.columns.size
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if index.isValid():
+            if role == QtCore.Qt.DisplayRole:
+                return str(self._data.values[index.row()][index.column()])
+        return None
+
+    def headerData(self, col, orientation, role):
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self._data.columns[col]
+        return None
+
+def qt_display(dataframe):
+    application = QtGui.QApplication(sys.argv)
+    view = QtGui.QTableView()
+    model = PandasModel(df)
+    view.setModel(model)
+
+    view.show()
+    #sys.exit(application.exec_())
+
+
+def plot_payoff(data, x ,y, data_time=None):
+    data.plot(x=x, y=y, color='blue', lw=1.5)
+    #data_time.plot(x=x, y=y, color='red', lw=1.5, style='-')
+    plt.axvline(spot, lw=1.0, linestyle='--', label='Spot')
+    plt.axhline(0, lw=1.0, linestyle='--', color='r')
+    plt.grid(True)
+    plt.xlim(spot-1000, spot+1000)
+    plt.xlabel('Strike Prices')
+    plt.ylabel('Payoff')
+    plt.title('Strategy Payoff')
+    plt.savefig(dir + '/strategy_payoff.png')
+
 
 if __name__ == '__main__':
 
-    spot = 11945
-    symbol = 'NIFTY'
     dte = get_days_to_expiry(today, end)
     list_expiries = get_expiry_from_option_chain(symbol)
     req_row = get_req_row(symbol, expdate='27JUN2019')
@@ -266,16 +409,22 @@ if __name__ == '__main__':
     strike_list = parse_chain(req_row, 'strike')
     call_iv_list = parse_chain(req_row, 'ivC')
     put_iv_list = parse_chain(req_row, 'ivP')
+    call_bidprice = parse_chain(req_row, 'bidpriceC')
+    put_bidprice = parse_chain(req_row, 'bidpriceP')
+    call_askprice = parse_chain(req_row, 'askpriceC')
+    put_askprice  = parse_chain(req_row, 'askpriceP')
+    call_ltp = parse_chain(req_row, 'ltpC')
+    put_ltp = parse_chain(req_row, 'ltpP')
     call_itm_strikes = get_itm_strikes(strike_list, 'call')
     call_otm_strikes = get_otm_strikes(strike_list, 'call')
     put_itm_strikes = get_itm_strikes(strike_list, 'put')
     put_otm_strikes = get_otm_strikes(strike_list, 'put')
     df = calculate_greeks(strike_list, call_iv_list, put_iv_list)
 
-    application = QtGui.QApplication(sys.argv)
-    view = QtGui.QTableView()
-    model = PandasModel(df)
-    view.setModel(model)
-
-    view.show()
-    sys.exit(application.exec_())
+    _calc_dataframe = strangle_payoff(dataFrame=df)
+    #_calc_dataframe = butterfly_payoff(df, 12200, 111.4, 11500, 145)
+    qt_display(_calc_dataframe)
+    x = 'strikes'
+    y = 'Payoff'
+    plot_payoff(_calc_dataframe, x=x, y=y)
+    plt.show()
