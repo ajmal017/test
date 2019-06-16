@@ -121,7 +121,7 @@ def get_credit_recvd(*args):
             credit.append(-(int(arg[1] * int(arg[4]))))
 
     total_credit = np.sum(credit)
-    print('Total Credit: ', total_credit)
+    print('Total Credit in points: ', total_credit)
     print('Max profit: ', total_credit * 75)
 
 def get_greeks_strategy(strike_list, *args):
@@ -143,11 +143,11 @@ def get_greeks_strategy(strike_list, *args):
             delta.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).callDelta)
             vega.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).vega)
 
-    snap_theta = np.round(np.sum(theta, axis=0),2)
+    snap_theta = np.round(np.sum(theta, axis=0),3)
     print('Theta: ', snap_theta)
-    print('Vega: ', np.round(np.sum(vega),2))
-    print('Delta: ', np.round(np.sum(delta),2))
-    print('Gamma: ', np.round(np.sum(gamma),2))
+    print('Vega: ', np.round(np.sum(vega),3))
+    print('Delta: ', np.round(np.sum(delta),3))
+    print('Gamma: ', np.round(np.sum(gamma),3))
     print('Total Decay:', snap_theta * 75 )
 
     return None
@@ -547,10 +547,32 @@ if __name__ == '__main__':
     #_calc_dataframe = strangle_payoff(dataFrame=df)
     #_calc_dataframe = butterfly_payoff(df, 12200, 111.4, 11500, 145)
 
-    leg1 = [11700, 61, 'c', 'S', 4]
-    leg2 = [11900, 73, 'c', 'S', 4]
-    leg3 = [12000, 38.2, 'c', 'S', 4]
-    leg4 = [12100, 17.5, 'c', 'L', 4]
+    k1 = '11700PE'
+    k2 = '12000CE'
+    k3 = None
+    k4 = None
 
-    trade_details(leg1, leg2, leg3)
+
+    if k1:
+        premium = put_ltp[strike_list.index(int(k1[:-2]))] if k1[-2:] == 'PE' \
+            else call_ltp[strike_list.index(int(k1[:-2]))]
+        leg1 = [int(k1[:-2]), premium , k1[-2:][0], 'S', 5]
+        print('Leg1 premium:', premium)
+    if k2:
+        premium = put_ltp[strike_list.index(int(k2[:-2]))] if k2[-2:]=='PE' \
+            else call_ltp[strike_list.index(int(k2[:-2]))]
+        leg2 = [int(k2[:-2]), premium, k2[-2:][0], 'S', 5]
+        print('Leg2 premium:', premium)
+    if k3:
+        premium = put_ltp[strike_list.index(int(k3[:-2]))] if k3[-2:]=='PE' \
+            else call_ltp[strike_list.index(int(k3[:-2]))]
+        leg3 = [int(k3[:-2]), premium, k3[-2:][0], 'S', 5]
+        print('Leg3 premium:', premium)
+    if k4:
+        premium = put_ltp[strike_list.index(int(k4[:-2]))] if k4[-2:]=='PE' \
+            else call_ltp[strike_list.index(int(k4[:-2]))]
+        leg4 = [int(k4[:-2]), premium, k4[-2:][0], 'S', 5]
+        print('Leg4 premium:', premium)
+
+    trade_details(leg1, leg2)
     plt.show()
