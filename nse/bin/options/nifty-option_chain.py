@@ -6,8 +6,10 @@ import pandas as pd
 from PyQt4 import QtCore, QtGui
 import sys
 import datetime as dt
+import matplotlib
+#matplotlib.use('gtkagg')
 import matplotlib.pyplot as plt
-
+from matplotlib.widgets import Cursor
 
 
 # Constants
@@ -19,7 +21,7 @@ ir = 7.0
 lotsize = 75
 today = dt.datetime.now().date()
 end = dt.date(2019, 6, 27)
-leg1_strike = 12200
+leg1_strike = 11400
 leg2_strike = 11400
 leg3_strike = None
 leg4_strike = None
@@ -31,7 +33,7 @@ leg4_premium = 0.0
 
 num_lots_futures = 1.0
 num_lots_leg1 = 5.0
-num_lots_leg2 = 3.0
+num_lots_leg2 = 15.0
 
 Qt = QtCore.Qt
 
@@ -64,6 +66,103 @@ def strangle_payoff(dataFrame):
         dataFrame['leg2Payoff'] = num_lots_leg2 * (dataFrame['leg2_premium'] - dataFrame['leg2_intr_Value'])
     dataFrame['Payoff'] = dataFrame['leg1Payoff'] + dataFrame['leg2Payoff']
     return dataFrame
+
+
+def cross_hair(x, y, ax=None, **kwargs):
+    if ax is None:
+        ax = plt.gca()
+    horiz = ax.axhline(y, **kwargs)
+    vert = ax.axvline(x, **kwargs)
+    return horiz, vert
+
+def payoff(strike_list,*args):
+
+    payoff_list = []
+
+    """
+    list[0] = strike
+    list[1] = premium credit or debit
+    list[2] = call or put
+    list[3] = Long or Short
+    list[4] = size of the trade
+    """
+    def price(list):
+        """ return payoff for each leg of the trade"""
+        if list[2].upper() == 'P':
+            if list[3].upper() == 'L':
+                payoff_leg = [list[4] * (max(0, list[0] - i) - list[1]) for i in strike_list]
+            else:
+                payoff_leg = [list[4] * (list[1] - max(0, list[0] - i)) for i in strike_list]
+        else:
+            if list[3].upper() == 'L':
+                payoff_leg = [list[4] * (max(0, i - list[0]) - list[1]) for i in strike_list]
+            else:
+                payoff_leg = [list[4] * (list[1] - max(0, i - list[0])) for i in strike_list]
+
+        return payoff_leg
+
+    for arg in args:
+        """ Add the payoff of each leg of the trade to a list """
+        payoff_list.append(price(arg))
+
+    payoff = np.sum(payoff_list, axis=0)
+
+    return payoff
+
+
+def get_credit_recvd(*args):
+    """ Get the credit/debit for the strategy """
+    credit = []
+    debit = []
+    for k, arg in enumerate(args):
+        if arg[3].upper() == 'S':
+            credit.append(int(arg[1] * int(arg[4])))
+        else:
+            credit.append(-(int(arg[1] * int(arg[4]))))
+
+    total_credit = np.sum(credit)
+    print('Total Credit: ', total_credit)
+    print('Max profit: ', total_credit * 75)
+
+def get_greeks_strategy(strike_list, *args):
+    """ Get the gamma for each option strike in the chain """
+    theta = []
+    gamma = []
+    delta = []
+    vega = []
+    for k, arg in enumerate(args):
+        index = strike_list.index(args[k][0])
+        if arg[2].upper() == 'P':
+            theta.append(BS([spot, arg[0], ir, dte], volatility=put_iv_list[index]).putTheta)
+            gamma.append(BS([spot, arg[0], ir, dte], volatility=put_iv_list[index]).gamma)
+            delta.append(BS([spot, arg[0], ir, dte], volatility=put_iv_list[index]).putDelta)
+            vega.append(BS([spot, arg[0], ir, dte], volatility=put_iv_list[index]).vega)
+        else:
+            theta.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).callTheta)
+            gamma.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).gamma)
+            delta.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).callDelta)
+            vega.append(BS([spot, arg[0], ir, dte], volatility=call_iv_list[index]).vega)
+
+    snap_theta = np.round(np.sum(theta, axis=0),2)
+    print('Theta: ', snap_theta)
+    print('Vega: ', np.round(np.sum(vega),2))
+    print('Delta: ', np.round(np.sum(delta),2))
+    print('Gamma: ', np.round(np.sum(gamma),2))
+    print('Total Decay:', snap_theta * 75 )
+
+    return None
+
+
+def get_gamma_option_chain(strike_list, **kwargs):
+    """ Get the gamma for each option strike in the chain """
+
+    gamma = []
+    for args in kwargs:
+        for key, value in enumerate(strike_list):
+            vol = call_iv_list if args[2].upper() == 'C' else put_iv_list
+            gamma.append(BS([spot, value, ir, dte], volatility=vol[key]).gamma)
+
+
 
 def butterfly_payoff(dataFrame, strike1, strike1premium, strike2,
                      strike2premium, strike3=None, strike3premium=None,
@@ -387,17 +486,40 @@ def qt_display(dataframe):
     #sys.exit(application.exec_())
 
 
-def plot_payoff(data, x ,y, data_time=None):
-    data.plot(x=x, y=y, color='blue', lw=1.5)
-    #data_time.plot(x=x, y=y, color='red', lw=1.5, style='-')
-    plt.axvline(spot, lw=1.0, linestyle='--', label='Spot')
-    plt.axhline(0, lw=1.0, linestyle='--', color='r')
-    plt.grid(True)
-    plt.xlim(spot-1000, spot+1000)
-    plt.xlabel('Strike Prices')
-    plt.ylabel('Payoff')
-    plt.title('Strategy Payoff')
-    plt.savefig(dir + '/strategy_payoff.png')
+def plot_payoff(payoff):
+    fig = plt.figure(figsize=(10,10))
+    ax1 = fig.add_subplot(2,1,1)
+    ax1.plot(strike_list, payoff, label='Payoff All legs')
+    ax1.legend(fontsize=8)
+    ax1.set_xlabel('Strategy payoff', fontsize=8)
+    #ax.set_xlim(spot-1000, spot+1000)
+    #ax.set_ylim(-500, 500)
+    ax1.axvline(spot, lw=1.0, linestyle='--', label='Spot')
+    ax1.axhline(0, lw=1.0, linestyle='--', color='r')
+    cursor = Cursor(ax1, useblit=True, color='red', linewidth=1.5)
+    ax1.grid(True)
+
+    ax2 = fig.add_subplot(223)
+    ax2.plot(strike_list, call_iv_list, label='Call IV')
+    ax2.legend(fontsize=8)
+    ax2.grid(True)
+
+    ax3 = fig.add_subplot(224)
+    ax3.plot(strike_list, put_iv_list, label='Put IV')
+    ax3.legend(fontsize=8)
+    ax3.grid(True)
+
+    return None
+
+
+def trade_details(*args):
+    _payoff = payoff(strike_list, *args)
+    """
+    qt_display(_calc_dataframe)
+    """
+    plot_payoff(payoff=_payoff)
+    get_greeks_strategy(strike_list, *args)
+    get_credit_recvd(*args)
 
 
 if __name__ == '__main__':
@@ -405,6 +527,7 @@ if __name__ == '__main__':
     dte = get_days_to_expiry(today, end)
     list_expiries = get_expiry_from_option_chain(symbol)
     req_row = get_req_row(symbol, expdate='27JUN2019')
+
 
     strike_list = parse_chain(req_row, 'strike')
     call_iv_list = parse_chain(req_row, 'ivC')
@@ -421,10 +544,13 @@ if __name__ == '__main__':
     put_otm_strikes = get_otm_strikes(strike_list, 'put')
     df = calculate_greeks(strike_list, call_iv_list, put_iv_list)
 
-    _calc_dataframe = strangle_payoff(dataFrame=df)
+    #_calc_dataframe = strangle_payoff(dataFrame=df)
     #_calc_dataframe = butterfly_payoff(df, 12200, 111.4, 11500, 145)
-    qt_display(_calc_dataframe)
-    x = 'strikes'
-    y = 'Payoff'
-    plot_payoff(_calc_dataframe, x=x, y=y)
+
+    leg1 = [11700, 61, 'c', 'S', 4]
+    leg2 = [11900, 73, 'c', 'S', 4]
+    leg3 = [12000, 38.2, 'c', 'S', 4]
+    leg4 = [12100, 17.5, 'c', 'L', 4]
+
+    trade_details(leg1, leg2, leg3)
     plt.show()
