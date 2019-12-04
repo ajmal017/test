@@ -142,6 +142,7 @@ def main():
 		print(e)
 
 	filename = '%s_%s.csv' % (name,_const.timestr)
+	filename = 'INDICES.csv'
 
 	try:
 		if args['del']:

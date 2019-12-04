@@ -22,7 +22,7 @@ class constants:
     expiry_month='Apr'
     timestr=time.strftime("%Y%m%d")
     script_dir=os.path.dirname(os.path.abspath(__file__))
-    location=script_dir + '/../../data/'
+    location=script_dir + '/data/'
     log_location=location + 'log/'
     directory_name=location + timestr + '/'
     current_filename=directory_name + '../open_trades/current.csv'
