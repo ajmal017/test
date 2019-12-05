@@ -1,0 +1,3 @@
+,YStock,XStock,PValue,Beta(Slope),STD_ERR_Ratio,Alpha(Intercept),Close_STD_Error(Z-Score),Alpha:YPrice
+0,MARUTI,NIFTY,0.0000,0.63,20.20,-0.01,1.25,-1.46177459435755
+1,NIFTY,MARUTI,0.0000,1.06,16.12,0.39,-0.43,35.160476018752256

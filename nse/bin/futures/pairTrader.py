@@ -221,13 +221,16 @@ class pairTrader():
         return '%.2f' % model.params[0]
 
     def get_beta(self, model):
-        # Beta
+        # Beta OR Slope
         return '%.2f' % model.params[1]
 
     def get_pvalue(self, model):
         return '%.4f' % model.f_pvalue
 
     def get_current_std_err(self, model):
+        """
+        Returns the Z-Score
+        """
         return '%.2f' % (model.resid[-1] / self.get_std_err(model))
 
     def get_alpha_price_ratio(self, model, price):
@@ -243,7 +246,7 @@ class pairTrader():
         print('\nAlpha', self.get_alpha(model))
         print('\nBeta', self.get_beta(model))
         print('\nPValue', self.get_pvalue(model))
-        print('\nCurrent Std Error:', self.get_current_std_err(model))
+        print('\nCurrent Std Error (Z-Score):', self.get_current_std_err(model))
 
     def find_cointegrated_pairs(self, data, pfilter):
         n = data.shape[1]
@@ -282,16 +285,6 @@ class pairTrader():
         rows_list.append(self.get_alpha_price_ratio(model, df[Y].iat[-1]))
         # rows_list.append(df[Y].iat[-1])
 
-        """
-        running_df.YStock = Y
-        running_df.XStock = X
-        running_df.PValue = get_pvalue(model)
-        running_df.Beta = get_beta(model)
-        running_df.STD_ERR_Ratio = get_std_err_ratio(model)
-        running_df.Alpha = get_alpha(model)
-        running_df.Current_STD_Error = get_current_std_err(model)
-        """
-
         return rows_list
 
     def LRegression_allPairs(self):
@@ -301,11 +294,12 @@ class pairTrader():
         ## Perform linear regression on all the possible pairs in the provided basket of stocks
         ## Store their OLS model results and write them out to a csv file
         """
+        #Get the Linear regression header from constants
         columns = constants.header
         qualified_df = pd.DataFrame(columns=columns)
         # qualified_df = pd.DataFrame(columns=columns)
         data = self.data.dropna()
-        print(data.head())
+        print(data.tail())
         n = data.shape[1]
         keys = data.keys()
 
@@ -319,11 +313,13 @@ class pairTrader():
                 X = np.asarray(data[keys[j]])
                 model = self.linreg(y=Y, x=X)
                 inverse_model = self.linreg(y=X, x=Y)
+                """
                 print("YStock %s ======== XStock %s" % (keys[i], keys[j]))
                 print(self.print_model_info(model))
                 print("+++++")
                 print("YStock %s ======== XStock %s" % (keys[j], keys[i]))
                 print(self.print_model_info(inverse_model))
+                """
                 """
                 if self.get_std_err_ratio(model) < self.get_std_err_ratio(inverse_model):
                     print('\tChoosing YStock : %s XStock: %s' % (keys[i], keys[j]))

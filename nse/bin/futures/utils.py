@@ -53,7 +53,7 @@ class constants:
     bnifty_lotsize={'AXISBANK': 1200, 'BANKBARODA': 4000, 'HDFCBANK': 500, 'ICICIBANK': 2750,
                     'IDFCBANK': 11000, 'INDUSINDBK': 300, 'KOTAKBANK': 800, 'PNB': 5500, 'RBLBANK': 1200,
                     'SBIN': 3000, 'YESBANK': 1750, 'BANKNIFTY': 40}
-    header=['YStock', 'XStock', 'PValue', 'Beta', 'STD_ERR_Ratio', 'Alpha', 'Close_STD_Error', 'Alpha:YPrice']
+    header=['YStock', 'XStock', 'PValue', 'Beta(Slope)', 'STD_ERR_Ratio', 'Alpha(Intercept)', 'Close_STD_Error(Z-Score)', 'Alpha:YPrice']
 
 
 # utility class implementing the helper funtions for nsequoter
