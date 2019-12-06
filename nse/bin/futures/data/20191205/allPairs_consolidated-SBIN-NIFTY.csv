@@ -1,0 +1,3 @@
+,YStock,XStock,PValue,Beta(Slope),STD_ERR_Ratio,Alpha(Intercept),Close_STD_Error(Z-Score),Alpha:YPrice
+0,SBIN,NIFTY,0.0000,0.11,2.38,-996.13,0.86,-296.4672619047619
+1,NIFTY,SBIN,0.0000,8.28,0.53,9271.95,-0.57,77.21605956128518

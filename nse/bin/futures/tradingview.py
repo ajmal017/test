@@ -34,11 +34,14 @@ def initialize_logging(args):
     logger.info("Running Linear Regression")
 
 
-directory = '/home/abhishek/Downloads/tradingview/'
+
+directory = os.path.expanduser('~')+'/Downloads/tradingview/'
 tradingView_header = ['time', 'open', 'high', 'low', 'close', 'MA', 'MA1', 'Histogram', 'MACD', 'Signal']
+banknifty_basket = ['SBIN','HDFC','AXISBANK','ALBK','PNB','ICICIBANK','NIFTY','BANKNIFTY','KOTAKBANK']
+currency_basket = ['6AZ2019', '6EZ2019', '6NZ2019']
 
 
-def usfutures(basket, priceType, filename, skipfoot=0):
+def tradingview_data(basket, priceType, filename, skipfoot=0):
     """
     Convert the basket of US futures csv dataframe to a single dataframe in
     required format:
@@ -48,6 +51,7 @@ def usfutures(basket, priceType, filename, skipfoot=0):
     :return: dataframe pandas
     """
     for k, v in enumerate(basket):
+        print('File =',v)
         inputFilename = directory + v.upper() + '.csv'
         if not os.path.isfile(inputFilename):
             print('File %s not present. Please download' % inputFilename)
@@ -91,16 +95,25 @@ def main():
     parser.add_argument('-x', '--xstock', help='Second stock/futures symbol', default='6E')
     parser.add_argument('-type', '--pricetype', help='Price type open|high|low|close', default='close')
     parser.add_argument('-skip', '--skip', help='Number of rows to skip from bottom', default=0)
+    parser.add_argument('-bnifty','--bnifty', help='Bank Nifty (NSE) basket', required=False, action='store_true', default=False)
+    parser.add_argument('-currency','--currency', help='Currency Futures basket', required=False, action='store_true', default=False)
     args = vars(parser.parse_args())
 
     initialize_logging(args)
 
+    print(args['currency'])
     # Initialize
     eTime = datetime.date.today()
-    basket = [args['ystock'], args['xstock']]  # , 'ES','NQ']
+    if args['ystock'] or args['xstock']:
+        basket = [args['ystock'], args['xstock']]  # , 'ES','NQ']
+    if args['bnifty']:
+        basket = banknifty_basket
+        print('Hello')
+    if args['currency']:
+        basket = currency_basket
+
     # basket = ['CME_6AZ2019','CME_6EZ2019','CBOT_ZNZ2019','CME_6NZ2019','CME_MINI_MESZ2019',
     #          'COMEX_GCF2020','NSE_SBIN','NYMEX_CLF2020','NYMEX_MINI_QMF2020']
-    currency_basket = ['CME_6AZ2019', 'CME_6EZ2019', 'CME_6NZ2019']
     consolidated_file_header = ['ind', basket[0], basket[1]]
     name = '-'.join(i for i in basket)
     filename = 'consolidated-%s.csv' % name
@@ -108,6 +121,7 @@ def main():
     rename_files()
 
     if os.path.isfile(directory + filename):
+        pass
         # Re-read the consolidated csv if it already exists
         print('Data already downloaded in file: %s' % (directory + filename))
         try:
@@ -122,7 +136,7 @@ def main():
         # Prepare consolidated dataframe csv from downloaded data
         pass
 
-    data = usfutures(basket, priceType=args['pricetype'].lower(), filename=filename,
+    data = tradingview_data(basket, priceType=args['pricetype'].lower(), filename=filename,
                      skipfoot=int(args['skip']))
 
     if not pairTrader.LinearRegression_MODEL(data=data, filename=filename):
